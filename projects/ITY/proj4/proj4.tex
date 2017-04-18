@@ -1,0 +1,87 @@
+\documentclass[11pt, a4paper]{article}
+\usepackage{times}
+\usepackage[left=2cm, text={17cm, 24cm}, top=3cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[czech]{babel}
+%
+\bibliographystyle{czplain}
+%
+\begin{document}
+%
+\begin{titlepage}
+%
+\begin{center}
+%
+\Huge
+\textsc{Vysoké učení technické v Brně\\
+\huge Fakulta informačních technologií\\}
+%
+\vspace{\stretch{0.382}}
+%
+{\LARGE
+Typografie a publikování -- 4. projekt\\
+\Huge Bibliografické citace\\}
+%
+\vspace{\stretch{0.618}}
+%
+\end{center}
+{\Large \today \hfill Dominik Křivohlávek}
+\medskip
+\end{titlepage}
+%
+\section{Úvod}
+Bezdrátová technologie je již dnes součástí našeho života, a již těžce si lze život bez ní představit.
+Mezi bezdrátovými technologiemi je nejspíše nejznámější WiFi \cite{wifi_pruvodce}. Pojďme se na tuto technologii podívat trochu podrobněji.
+%
+\section{Standardy}
+%
+Název WiFi zastřešuje množinu standardů IEEE 802.11 s různými příponami.
+Nejznámější z nich jsou přípony: a, b, g, n. Další standardy jsou ve vývoji, nebo jejich nasazení není ještě běžné.
+Tyto standardy se od sebe rozlišují zejména maximální přenosovou rychlostí a frekvencí pásma.
+\begin{itemize}
+    \item a -- přenosová rychlost: 54 Mb\,/\,s, pracovní frekvence: 5 GHz
+    \item b -- přenosová rychlost: 11 Mb\,/\,s, pracovní frekvence: 2.4 GHz
+    \item g -- přenosová rychlost: 54 Mb\,/\,s, pracovní frekvence: 2.4 GHz
+    \item n -- přenosová rychlost: až 600 Mb\,/\,s, pracovní frekvence: 2.4 nebo 5 GHz
+\end{itemize}
+Výše uvedené rychlosti jsou pouze teoretické, v réalném nasazení jsou tyto rychlosti \cite{rychlost} mnohem nižší.
+%
+\section{Zabezpečení}
+Zabezpečení WiFi nelze brát na lehkou váhu, proto byly s postupem času vyvinuty různé způsoby zabezpečení.
+\begin{itemize}
+    \item WEP -- jednoduché zabezpečení pomocí klíče složeného ze znaků hexadecimální soustavy
+    \item WPA uživatelské -- dnes nejběžnější zabezpečení sítě v domácnostech pomocí klíče s 8 - 63 znaky
+    \item WPA podnikové -- využívá k autentizaci uživatelů RADIUS \cite{metody_autentizace} protokol, bežné ve velkých firmách či školách
+\end{itemize}
+%
+\subsection{WEP}
+Zabezpečení WEP je jedno z prvních zabezpečení WiFi sítí. 
+K šifrování komunikace pomocí tohoto algoritmu je použit klíč o délce 10 nebo 26 hexadecimálních znaků.
+V případě délky 10 znaků se jedná o WEP~64-bit, v případě délky 26 znaků pak jako WEP~128-bit \cite{zabezp_kniha}.
+Nekteří výrobci nabízeli zařízení schopné pracovat i s WEP~152-bit a také s WEP~256-bit \cite{wiki_wep}.\par
+V dnešní době není již použití WEP bezpečné a toto zabezepčení lze prolomit \cite{wep_crack} prakticky během několika minut.
+%
+\subsection{WPA}
+WPA -- neboli Wireless Protected Access je přímým nástupcem zabezpečení WEP. V dnešní době jde o relativně rozumné 
+zabezpečení, avšak byly již objeveny způsoby, jak tento typ zabezpečení v rozumném čase prolomit \cite{wpa_crack}.
+%
+\subsubsection{WPA uživatelské}
+Zabezpečení WPA \cite{wpa_personal} v uživatelské formě umožňuje zabezpečit probíhající komunikaci mezi zařízeními libovolným klíčem
+o délce 8 -- 63 znaků. Tato forma zabezpečení WPA je běžně užívaná v domácnostech a malých firmách. Ve velkých podnicích
+je vhodné využít podnikové WPA.
+%
+\subsubsection{WPA podnikové}
+Nasazení podnikového WPA je možné pouze s RADIUS serverem, který zajišťuje jednak správu
+uživatelů, jejich autorizaci a také autentizaci v síti. Tento způsob centrální správy umožňuje
+vysokou míru zabezpečení a také umožňuje v rámci různých LAN jednotné ověřování a přihlašování. Typickým příkladem je
+univerzitní síť eduroam \cite{eduroam}.
+%
+\section{WPA2}
+V roce 2006 bylo zabezpečení WPA oficiálně nahrazeno zabezpečením WPA2. Na rozdíl od WPA, WPA2 vyžaduje
+pro šifrování komunikace algoritmy AES, ale podporuje i algoritmus TKIP, aby byla zajištěna zpětná kompatibilita se zabezpečením WPA.
+V roce 2010 byla ve WPA2 objevena \cite{hole196} chyba pojmenovaná \uv{Hole196} podle místa, kde byla nalezena -- v popisu 
+protokolu IEEE 802.11 na straně 196. 
+\newpage
+\bibliography{zdroje}
+%
+\end{document}

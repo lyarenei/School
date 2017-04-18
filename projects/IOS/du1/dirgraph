@@ -1,0 +1,364 @@
+#!/bin/sh
+
+# Skript pro analyzu adresare
+# Predmet: IOS, prvni projekt
+# AUTOR: Dominik Krivohlavek, FIT
+# ID, login: 189024, xkrivo02
+# Brezen 2017, FIT VUT Brno
+
+POSIXLY_CORRECT=yes
+
+# Detekce vystupu (terminal / soubor)
+if [ -t 1 ] ; 
+then 
+    shell_cols=$(tput cols)
+    shell_cols=$(($shell_cols-1)) 
+else 
+    shell_cols=79 
+fi
+
+# Aktualni adresar, bude zmenen pouze pokud bude zadana cesta
+DIR="."
+
+# Zjisteni exit statusu a vypis chybove hlasky ($1 - kontrolovany status, $2 - mez)
+check_err()
+{
+    status="$2"
+    if [ "$status" == "" ];
+    then status=0
+    fi
+
+    if [ $1 -gt $status ];
+    then
+        (>&2 echo "Byla zjistena chyba pri zpracovani souboru!")
+        exit -1
+    fi
+}
+
+# Testovani argumentu
+for arg in "$@" 
+do
+    # Zpracovani vyrazu pro '-i'
+    if [ "$skip_arg" == 1 ];
+    then
+        skip_arg=0
+
+        FILE_ERE="$arg"
+        continue
+    fi
+    case $arg in
+        -h)     
+                echo "Pouziti: dirgraph [-i FILE_ERE] [-n] [DIR]"
+                exit;;
+
+        -n)
+                if [ "$root_specified" == 1 ];
+                then
+                    (>&2 echo "Neni dovoleno pouziti prepinacu za adresar!")
+                    exit -1
+                fi
+
+                if [ "$normalize" == 1 ];
+                then
+                    (>&2 echo "Prepinac '-n' byl zadan vicekrat!")
+                    exit 1
+                fi
+                normalize=1;;
+
+        -i)
+                if [ "$root_specified" == 1 ];
+                then
+                    (>&2 echo "Neni dovoleno pouziti prepinacu za adresar!")
+                    exit -1
+                fi
+
+                if [ "$exclude" == 1 ];
+                then
+                    (>&2 echo "Prepinac '-i' byl zadan vicekrat!")
+                    exit 1
+                fi
+
+                exclude=1
+                skip_arg=1;;
+
+         *)     if [ "$root_specified" == "" ];
+                then
+                    cd $arg 2> /dev/null
+                    if [ "$?" == "0" ]; 
+                    then
+                        DIR="$arg"
+                        root_specified=1 
+                    else 
+                        (>&2 echo "Zadany adresar neexistuje!")
+                        exit -1
+                    fi
+                else
+                    (>&2 echo "Bylo zadano vice adresaru!") 
+                    exit -1
+                fi;;
+    esac
+done
+
+# Kontrola zda FILE_ERE nepokryva korenovy adresar (se zadanim cesty)
+
+root=`echo -e "$DIR" | grep -v "$FILE_ERE" 2> /dev/null`
+check_err $? 1
+if [ "$root" == "" ] && [ "$exclude" == "1" ];
+then
+    (>&2 echo "Regularni vyraz nesmi pokryvat nazev korenoveho adresare!")
+    exit
+fi
+
+# Kontrola zda FILE_ERE nepokryva korenovy adresar (bez zadani cesty)
+cwd=${PWD##*/}
+root=`echo -e "$cwd" | grep -v "$FILE_ERE" 2> /dev/null`
+check_err $? 1
+if [ "$root" == "" ] && [ "$exclude" == "1" ];
+then
+    (>&2 echo "Regularni vyraz nesmi pokryvat nazev korenoveho adresare!")
+    exit
+fi
+
+# Inicializace promennych pro celkove pocty
+dir_count=0
+file_count=0
+
+# Promenne pro histogram velikosti souboru
+h_bytes=0 # 0: 100B   (Hundreds)
+o_kib=0 # 1: 1K     (Ones)
+t_kib=0 # 2: 10K    (Tens)
+h_kib=0 # 3: 100K
+o_mib=0 # 4: 1M
+t_mib=0 # 5: 10M
+h_mib=0 # 6: 100M
+o_gib=0 # 7: 1G
+m_gib=0 # 8: >=1G   (More)
+
+# Vypocet poctu mrizek pro vykresleni FSHIST
+grid_count()
+{
+    if [ "$1" == "" ] || [ "$1" == 0 ];
+    then x_count=0
+    else
+        if [ "$1" == "$max_count" ];
+        then x_count=$blank_cols
+        else x_count=$((($1*$blank_cols)/$max_count))
+        fi
+    fi
+}
+
+# Funkce pocita pocet slozek a souboru na predane ceste
+count_folders()
+{
+    if [ "$exclude" == 1 ];
+    then
+        dir_count=$(find . -type d 2> /dev/null | egrep -v "$FILE_ERE" 2> /dev/null | wc -l 2> /dev/null)
+        check_err $?
+    else
+        dir_count=$(find . -type d 2> /dev/null | wc -l 2> /dev/null)
+        check_err $?
+    fi
+}
+
+# Zjisti pocty souboru v danem rozmezi ($1 = -lt, $2 = -gt, $3 = -eq)
+fs_count()
+{
+    # Pro (ne)prehlednost
+    hi=$1
+    lo=$2
+    els=$3
+
+    # 3 predane hodnoty
+    if [ "$#" == "3" ];
+    then
+        if [ "$exclude" == 1 ];
+        then
+            # Zjisteni vsech souboru
+            count_files=`find . 2> /dev/null -type f \( \( -size +"$lo"c -a -size -"$hi"c \) -o -size "$els"c \) \
+            | egrep -Z -v "$FILE_ERE" 2> /dev/null | wc -l 2> /dev/null`
+            check_err $?
+        else
+            count_files=`find . 2> /dev/null -type f \( \( -size +"$lo"c -a -size -"$hi"c \) -o -size "$els"c \) | wc -l 2> /dev/null`
+            check_err $?
+        fi
+    fi
+
+    # 2 predane hodnoty
+    if [ "$#" == "2" ];
+    then
+        if [ "$exclude" == 1 ];
+        then
+            # Zjisteni vsech souboru
+            count_files=`find . 2> /dev/null -type f -size +"$lo"c -o -size "$els"c | egrep -Z -v "$FILE_ERE" 2> /dev/null | wc -l 2> /dev/null`
+            check_err $?
+        else
+            count_files=`find . 2> /dev/null -type f -size +"$lo"c -o -size "$els"c | wc -l 2> /dev/null`
+            check_err $?
+        fi
+    fi
+
+    # 1 predana hodnota
+    if [ "$#" == "1" ];
+    then
+        if [ "$exclude" == 1 ];
+        then
+            # Zjisteni vsech souboru
+            count_files=`find . 2> /dev/null -type f -size -"$hi"c | egrep -Z -v "$FILE_ERE" 2> /dev/null | wc -l 2> /dev/null`
+            check_err $?
+        else
+            count_files=`find . 2> /dev/null -type f -size -"$hi"c | wc -l 2> /dev/null`
+            check_err $?
+        fi
+    fi
+}
+
+# Spocita pocet souboru pro jednotlive kategorie
+check_files()
+{
+    fs_count 100
+    h_bytes=$count_files
+
+    fs_count 1024 100 100
+    o_kib=$count_files
+
+    fs_count 10240 1024 1024
+    t_kib=$count_files
+
+    fs_count 102400 10240 10240
+    h_kib=$count_files
+
+    fs_count 1048576 102400 102400
+    o_mib=$count_files
+
+    fs_count 10485760 1048576 1048576
+    t_mib=$count_files
+
+    fs_count 104857600 10485760 10485760
+    h_mib=$count_files
+
+    fs_count 1073741824 104857600 104857600
+    o_gib=$count_files
+
+    fs_count 1073741824 1073741824
+    m_gib=$count_files
+
+    # Secteni poctu souboru
+    file_count=$(($h_bytes+$o_kib+$t_kib+$h_kib+$o_mib+$t_mib+$h_mib+$o_gib+$m_gib))
+}
+
+# Tiskne histogram velikosti souboru
+file_size()
+{
+    # Nadpis
+    echo File size histogram:
+
+    # Zjisteni nejvyssiho poctu
+    max_count=`echo -e "$h_bytes\n$o_kib\n$t_kib\n$h_kib\n$o_mib\n$t_mib\n$h_mib\n$o_gib\n$m_gib" | sort -nr | tr '\n' ' ' | awk '{print $1}'`
+
+    # Vypocet volneho mista na vypis mrizek
+    blank_cols=$(($shell_cols-12))
+
+    if [ "$max_count" -gt "$shell_cols" ] && [ "$normalize" == 1 ];
+    then
+        grid_count $h_bytes
+        echo "  <100 B  : " | awk -v number="$x_count" '{printf $0} {for(x = 0; x < number; x++) {printf "#"}} {printf "\n"}'
+        
+        grid_count $o_kib
+        echo "  <1 KiB  : " | awk -v number="$x_count" '{printf $0} {for(x = 0; x < number; x++) {printf "#"}} {printf "\n"}'
+        
+        grid_count $t_kib
+        echo "  <10 KiB : " | awk -v number="$x_count" '{printf $0} {for(x = 0; x < number; x++) {printf "#"}} {printf "\n"}'
+
+        grid_count $h_kib
+        echo "  <100 KiB: " | awk -v number="$x_count" '{printf $0} {for(x = 0; x < number; x++) {printf "#"}} {printf "\n"}'
+
+        grid_count $o_mib
+        echo "  <1 MiB  : " | awk -v number="$x_count" '{printf $0} {for(x = 0; x < number; x++) {printf "#"}} {printf "\n"}'
+        
+        grid_count $t_mib
+        echo "  <10 MiB : " | awk -v number="$x_count" '{printf $0} {for(x = 0; x < number; x++) {printf "#"}} {printf "\n"}'
+
+        grid_count $h_mib
+        echo "  <100 MiB: " | awk -v number="$x_count" '{printf $0} {for(x = 0; x < number; x++) {printf "#"}} {printf "\n"}'
+
+        grid_count $o_gib
+        echo "  <1 GiB  : " | awk -v number="$x_count" '{printf $0} {for(x = 0; x < number; x++) {printf "#"}} {printf "\n"}'
+
+        grid_count $m_gib
+        echo "  >=1 GiB : " | awk -v number="$x_count" '{printf $0} {for(x = 0; x < number; x++) {printf "#"}} {printf "\n"}'
+        
+    else
+        echo "  <100 B  : " | awk -v number="$h_bytes" '{printf $0} {for(x = 0; x < number; x++) {printf "#"}} {printf "\n"}'
+        echo "  <1 KiB  : " | awk -v number="$o_kib" '{printf $0} {for(x = 0; x < number; x++) {printf "#"}} {printf "\n"}'
+        echo "  <10 KiB : " | awk -v number="$t_kib" '{printf $0} {for(x = 0; x < number; x++) {printf "#"}} {printf "\n"}'
+        echo "  <100 KiB: " | awk -v number="$h_kib" '{printf $0} {for(x = 0; x < number; x++) {printf "#"}} {printf "\n"}'
+        echo "  <1 MiB  : " | awk -v number="$o_mib" '{printf $0} {for(x = 0; x < number; x++) {printf "#"}} {printf "\n"}'
+        echo "  <10 MiB : " | awk -v number="$t_mib" '{printf $0} {for(x = 0; x < number; x++) {printf "#"}} {printf "\n"}'
+        echo "  <100 MiB: " | awk -v number="$h_mib" '{printf $0} {for(x = 0; x < number; x++) {printf "#"}} {printf "\n"}'
+        echo "  <1 GiB  : " | awk -v number="$o_gib" '{printf $0} {for(x = 0; x < number; x++) {printf "#"}} {printf "\n"}'
+        echo "  >=1 GiB : " | awk -v number="$m_gib" '{printf $0} {for(x = 0; x < number; x++) {printf "#"}} {printf "\n"}'
+    fi
+}
+
+# Zjisti 10 nejcastejsich typu souboru, vystup uklada do $FTHIST
+file_type()
+{
+    # Zjisteni typu souboru
+    if [ "$exclude" == 1 ];
+    then
+        file_list=`find . -type f 2> /dev/null | egrep -v "$FILE_ERE" 2> /dev/null`
+        check_err $? 1
+    else
+        file_list=`find . -type f 2> /dev/null`
+    fi
+    
+    FT_list=`file 2> /dev/null -b $file_list`
+    
+    # Orez / rozsireni na 40 znaku
+    cut_file_types=`echo -e "${FT_list}" | awk '{if (length($0) > 40) {print substr($0,0,40)} else{ {print $0} } }'`
+
+    # Vypocet cetnosti souboru
+    pre_count=`echo "${cut_file_types}" | sort`
+    types_count=`echo "${pre_count}" | uniq -c`
+
+    # Orez mezer po uniq
+    del_ws=`echo -e "${types_count}" | sed "s/^[ \t]*//"`
+
+    # Setrideni podle poctu
+    sorted_count=`echo "${del_ws}" | sort -nr`
+
+    # Zjisteni nejvetsiho poctu pro normalizaci
+    max_count=`echo -e "${sorted_count}" | awk 'NR==1{print $1}'`
+
+    # Vypocet volneho mista na vypis # u FTHIST
+    blank_cols=$(($shell_cols-47)) 
+    
+    if [ "$max_count" -gt "$blank_cols" ] && [ "$normalize" == 1 ];
+    then
+        FT_HIST=`echo "${sorted_count}" | awk -v max="$max_count" -v colls="$blank_cols" '{ k++; {number = $1; $1 = ""; {if (length($0) >= 41) \
+        { {printf " "substr($0,0,41);} {printf "...: ";} } \
+        else{ {printf " %-44s: ", $0} }; {if (number == max) {count = colls;} else {count = (number*colls)/max;}} \
+        {for(x = 0; x < int(count); x++) {printf "#"} {printf "\n"}}}} {if(k == 10) exit;}}'`
+    else
+        FT_HIST=`echo "${sorted_count}" | awk '{ k++; {number = $1; $1 = ""; {if (length($0) >= 41) { {printf " "substr($0,0,41);} {printf "...: ";} } \
+        else{ {printf " %-44s: ", $0} }; {for(x = 0; x < number; x++) {printf "#"} {printf "\n"}}}} {if(k == 10) exit;}}'`
+    fi
+}
+
+# Volani funkci a vypis histrogramu
+count_folders
+check_files
+file_type
+
+echo Root directory: $DIR
+echo Directories: $dir_count
+echo All files: $file_count
+file_size
+echo "File type histogram:"
+
+# Pokud je prazdny adresar, nema smysl vypisovat FTHIST
+if [ "$file_count" == 0 ];
+then exit
+fi
+
+echo -e "${FT_HIST}"

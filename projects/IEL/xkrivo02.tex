@@ -1,0 +1,874 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsfonts, amsmath, amssymb}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage[free-standing-units]{siunitx}
+\usepackage[european]{circuitikz}
+\usepackage{tikz}
+\usepackage{tabularx}
+\usepackage{tabu}
+
+\pagestyle{fancy}
+\fancyhead{}
+
+\begin{document}
+
+\begin{titlepage}
+\begin{center}
+\vspace*{2cm}
+\Large{\textbf{Elektrotechnika pro informační technologie}}\\
+\textbf{Semestrální práce}\\
+
+\vfill
+\includegraphics[scale=0.125]{pics/fit_logo.png}
+\vfill
+
+\textbf{Dominik Křivohlávek (xkrivo02)}\\
+\textbf{1BIA 2016}\\
+
+\end{center}
+\end{titlepage}
+
+\fancyhead[L]{První úloha}
+\fancyhead[R]{\includegraphics[scale=0.025]{pics/fit_logo.png}}
+\section{První úloha (varianta: A)}
+\subsection{Zadání}
+\begin{center}
+
+\normalsize
+Stanovte napětí $U_{R8}$ a proud $I_{R8}$. Použijte metodu postupného zjednodušování obvodu.\\
+\vspace{15px}
+
+$U_{1} = 80$ V$, U_{2} = 120$ V$, R_{1} = 350$  $\Omega, R_{2} = 650$  $\Omega, R_{3} = 41$  $\Omega, R_{4} = 130$  $\Omega, R_{5} = 360$  $\Omega, R_{6} = 750$  $\Omega, R_{7} = 310$  $\Omega, R_{8} = 190$ $\Omega.$\\
+\vspace{15px}
+
+\begin{circuitikz} \draw
+ (0,0) to (1,0)
+ (1,0) to (1,-3)
+ (1,0) to[R=$R_1$, *-] (4,0)
+ (1,-3) to[R=$R_2$] (4,-3)
+ (4,-3) to[R=$R_3$, *-*] (4,0)
+ (4,0) to[R=$R_4$] (7,0)
+ (4,-3) to[R=$R_5$,-*] (7,-3)
+ (7,0) to (7,-5)
+ (7,-5) to[R=$R_6$,-*] (4,-5)
+ (4,-5) to (4,-4)
+ (4,-5) to (4,-6)
+ (4,-4) to[R=$R_7$,] (1,-4)
+ (4,-6) to[R=$R_8$, i>^=$I_{R_{8}}$, v=$U_{R_{8}}$, -*] (1,-6)
+ (1,-4) to (1,-6)
+ (1,-6) to (0,-6)
+ (0,-6) to (0,-5)
+ (0,-5) to[dcvsource, v<=$U_2$] (0,-3)
+ (0,-3) to[dcvsource, v<=$U_1$, i^=$I$] (0,0)
+;\end{circuitikz}
+
+\end{center}
+\vspace{25px}
+
+\subsection{Řešení}
+
+\begin{center}
+
+\normalsize
+Zjednodušíme zapojení $R_{7}$ a $R_{8}$. Zároveň přepočítáme trojúhelníkové zapojení $R_{1}$, $R_{2}$ a $R_{3}$ na hvězdu:\\
+\vspace{15px}
+
+\begin{circuitikz} \draw
+ (1,0) to[R=$R_a$, -*] (4,0)
+ (4,0) to (4,1)
+ (4,1) to[R=$R_b$] (7,1)
+ (7,1) to[R=$R_4$] (10,1)
+ (10,1) to (10,-3)
+ (4,0) to (4,-1) 
+ (4,-1) to[R=$R_c$] (7,-1)
+ (7,-1) to[R=$R_5$, -*] (10,-1)
+ (10,-3) to[R=$R_6$] (7,-3)
+ (7,-3) to[R=$R_{78}$] (4,-3)
+ (4,-3) to[dcvsource, v<=$U_2$] (1,-3)
+ (1,-3) to[dcvsource, v<=$U_1$, i^=$I$] (1,0)
+;\end{circuitikz}
+\vspace{25px}
+
+\Large
+$R_{a} = \frac{R_{1}*R_{2}}{R_{1}+R_{2}+R_{3}} = \frac{350*650}{350+650+410} = 161,3475$  $\Omega$\\
+\vspace{10px}
+
+$R_{b} = \frac{R_{1}*R_{3}}{R_{1}+R_{2}+R_{3}} = \frac{350*410}{350+650+410} = 101,773$  $\Omega$\\
+\vspace{10px}
+
+$R_{c} = \frac{R_{2}*R_{3}}{R_{1}+R_{2}+R_{3}} = \frac{650*410}{350+650+410} = 189,007$  $\Omega$\\
+\vspace{10px}
+
+$R_{78} = \frac{R_{7}*R_{8}}{R_{7}+R_{8}} = \frac{310*190}{310+190} = 117,8$  $\Omega$\\
+\vspace{25px}
+
+\normalsize
+Dále zjednodušíme zapojení rezistorů $R_{b}$ s $R_{4}$, $R_{c}$ s $R_{5}$ a $R_{78}$ s $R_{6}$:
+\vspace{25px}
+
+\begin{circuitikz} \draw
+ (1,0) to[R=$R_a$, -*] (4,0)
+ (4,0) to (4,1)
+ (4,1) to[R=$R_{b4}$] (7,1)
+ (7,1) to (7,-3)
+ (4,0) to (4,-1) 
+ (4,-1) to[R=$R_{c5}$, -*] (7,-1)
+ (7,-3) to[R=$R_{678}$] (4,-3)
+ (4,-3) to[dcvsource, v<=$U_2$] (1,-3)
+ (1,-3) to[dcvsource, v<=$U_1$, i^=$I$] (1,0)
+;\end{circuitikz}
+\vspace{25px}
+
+\Large
+$R_{b4} = R_{b}+R_{4} = 101,773+130 = 231,773$  $\Omega$\\
+\vspace{10px}
+
+$R_{c5} = R_{c}+R_{5} = 189,007+360 = 549,007$  $\Omega$\\
+\vspace{10px}
+
+$R_{678} = R_{6}+R_{78} = 117,8+750 = 867,8$  $\Omega$\\
+\clearpage
+
+\normalsize
+Následně zjednodušíme paralelní zapojení $R_{b4}$ s $R_{c5}$:
+\vspace{25px}
+
+\begin{circuitikz} \draw
+ (1,0) to[R=$R_a$] (4,0)
+ (4,0) to[R=$R_{b4c5}$] (7,0)
+ (7,0) to (7,-3)
+ (7,-3) to[R=$R_{678}$] (4,-3)
+ (4,-3) to[dcvsource, v<=$U_2$] (1,-3)
+ (1,-3) to[dcvsource, v<=$U_1$, i^=$I$] (1,0)
+;\end{circuitikz}
+\vspace{25px}
+
+\Large
+$R_{b4c5} = \frac{R_{b4}*R_{c5}}{R_{b4}+R_{c5}} = \frac{231,773*549,007}{231,773+549,007} = 162,9716$  $\Omega$\\
+\vspace{15px}
+
+\normalsize
+Na závěr spočítáme výsledný celkový odpor obvodu:
+\vspace{15px}
+
+\begin{circuitikz} \draw
+ (0,0) to[dcvsource, v<=$U$, i^=$I$] (2,0)
+ (2,0) to[R=$R$] (4,0)
+ (4,0) to (4,-1)
+ (4,-1) to (0,-1)
+ (0,-1) to (0,0)
+;\end{circuitikz}
+\vspace{15px}
+
+\Large
+$R = R_{a}+R_{b4c5}+R_{678} = 161,3475+162,9716+867,8 =$\\$ = 1192,1191$  $\Omega$\\
+\vspace{25px}
+
+\normalsize
+Jelikož nyní známe celkový odpor obvodu, můžeme spočítat celkový proud procházející obvodem:
+\vspace{15px}
+
+\Large
+$I = \frac{U_{1}+U_{2}}{R} = \frac{120+80}{1192,1191} = 167,7768$ mA
+\vspace{20px}
+
+\normalsize
+Nyní můžeme spočítat napětí na rezistoru $R_{78}$. Jelikož je napětí na paralelních větvích shodné, bude toto napětí i na rezistoru $R_{8}$:\\
+\vspace{15px}
+
+\Large
+$U_{78} = U_{R8} = R_{78}*I = 117,8*0,1677 = 19,755$ V
+\vspace{20px}
+
+\normalsize
+Nakonec spočítáme ze známého napětí na $R_{8}$ proud jím procházející:
+\vspace{15px}
+
+\Large
+$I_{R8} = \frac{U_{R8}}{R_{8}} = \frac{19,755}{190} = 103,974$ mA
+
+\end{center}
+\clearpage
+
+\fancyhead[L]{Druhá úloha}
+\fancyhead[R]{\includegraphics[scale=0.025]{pics/fit_logo.png}}
+\section{Druhá úloha (varianta: F)}
+\subsection{Zadání}
+\begin{center}
+
+\normalsize
+Stanovte napětí $U_{R4}$ a proud $I_{R4}$. Použijte metodu Théveninovy věty.\\
+\vspace{15px}
+
+$U = 130$ V, $R_{1} = 350$  $\Omega, R_{2} = 600$  $\Omega, R_{3} = 195$  $\Omega, R_{4} = 650$  $\Omega, R_{5} = 280$  $\Omega.$\\
+\vspace{15px}
+
+\begin{circuitikz} \draw
+ (0,0) to[R=$R_1$, -*] (3,0)
+ (3,0) to[R=$R_2$, *-*] (3,-3)
+ (3,0) to (6,0)
+ (6,0) to[R=$R_3$, *-*] (6,-3)
+ (6,0) to (9,0)
+ (9,0) to[R=$R_4$, v>=$U_{R_{4}}$, i>^=$I_{R_{4}}$] (9,-3)
+ (9,-3) to (6,-3)
+ (6,-3) to[R=$R_5$, *-*] (3,-3)
+ (3,-3) to (0,-3) 
+ (0,-3) to[dcvsource, v<=$U$, i^=$I$] (0,0)
+;\end{circuitikz}
+
+\end{center}
+\vspace{15px}
+
+\subsection{Řešení}
+\begin{center}
+
+\normalsize
+Pro spočítání vnitřního odporu $R_{i}$ odpojíme z obvodu zkoumaný rezistor $R_{4}$ a zkratujeme zdroj napětí U:\\
+\vspace{15px}
+
+\begin{circuitikz} \draw
+ (3,0) to[R=$R_1$, -*] (0,0)
+ (3,0) to[R=$R_2$, *-*] (3,-3)
+ (3,0) to (6,0)
+ (6,0) to[R=$R_3$] (6,-3)
+ (3,-3) to[R=$R_5$] (6,-3)
+ (3,-3) to (0,-3) 
+ (0,-3) to (0,0)
+;\end{circuitikz}
+\vspace{15px}
+
+Dále můžeme spočítat sériové zapojení rezistorů $R_{3}$ a $R_{5}$:\\
+\vspace{15px}
+
+\begin{circuitikz} \draw
+ (3,0) to[R=$R_1$, -*] (0,0)
+ (3,0) to[R=$R_2$, *-*] (3,-3)
+ (3,0) to (6,0)
+ (6,0) to[R=$R_{35}$] (6,-3)
+ (6,-3) to (3,-3)
+ (3,-3) to (0,-3) 
+ (0,-3) to (0,0)
+;\end{circuitikz}
+\vspace{15px}
+
+\Large
+$R_{35} = R_{3}+R_{5} = 195+280 = 475$  $\Omega$\\
+\vspace{25px}
+
+\normalsize
+Následně spočítáme odpor paralelně zapojených rezistorů $R_{2}$ a $R_{35}$:\\
+\vspace{15px}
+
+\begin{circuitikz} \draw
+ (3,0) to[R=$R_1$] (0,0)
+ (3,0) to[R=$R_{235}$] (3,-3)
+ (3,-3) to (0,-3) 
+ (0,-3) to (0,0)
+;\end{circuitikz}
+\vspace{15px}
+
+\Large
+$R_{235} = \frac{R_{2}*R_{35}}{R_{2}+R_{35}} = \frac{475*600}{475+600} = 265,1162$  $\Omega$\\
+\vspace{25px}
+
+\normalsize
+Z předchozího obrázku je zřejmé sériové zapojení rezistorů $R_{1}$ a $R_{235}$. Spočítáme jejich společný odpor pro získání $R_{i}$:\\
+\vspace{15px}
+
+\begin{circuitikz} \draw
+ (0,0) to[R=$R_i$] (3,0)
+ (3,0) to (3,-1)
+ (3,-1) to (0,-1) 
+ (0,-1) to (0,0)
+;\end{circuitikz}
+\vspace{15px}
+
+\Large
+$R_{i} = R_{1}+R_{235} = 265,1162+350 = 615,1162$  $\Omega$\\
+\vspace{25px}
+
+\normalsize
+Se znalostí celkového vnitřního odporu $R_{i}$ můžeme spočítat celkový proud v obvodu:\\
+\vspace{15px}
+
+\Large
+$I = \frac{U}{R_{i}} = \frac{130}{615,1162} = 0,2113$ A\\
+\vspace{25px}
+
+\normalsize
+Nyní můžeme spočítat napětí na rezistoru $R_{235}$:\\
+\vspace{15px}
+
+\Large
+$U_{R_{235}} = R_{i}*I = 615,1162*0,2113 = 56,019$ V\\
+\vspace{25px}
+
+\normalsize
+Následně spočítáme proud procházející větví s rezistory $R_{i}$ a $R_{i}$:\\
+\vspace{15px}
+
+\Large
+$I_{R_{35}} = \frac{U_{R_{235}}}{R_{35}} = \frac{56,019}{475} = 0,1179$ A\\
+\clearpage
+
+\normalsize
+Se znalostí $I_{R_{35}}$ můžeme spočítat napětí na rezistoru $R_{3}$. Jelikož je na paralelních větvích obvodu stejné napětí, bude se toto napětí rovnat vnitřnímu napětí $U_{i}$:\\
+\vspace{15px}
+
+\Large
+$U_{R_{3}} = U_{i} = R_{3}*I_{R_{35}} = 195*0,1179 = 22,9905$ V\\
+\vspace{15px}
+
+\normalsize
+Nyní známe potřebné veličiny pro náhradní obvod s vnitřním napětím $U_{i}$ a vnitřním odporem $R_{i}$. Připojíme tedy $R_{4}$ a spočítáme proud jím procházející. Také spočítáme napětí na rezistoru $R_{4}$:\\
+\vspace{15px}
+
+\begin{circuitikz} \draw
+ (0,0) to[R=$R_i$] (3,0)
+ (3,0) to[R=$R_4$, v>=$U_{R_{4}}$, i>^=$I_{R_{4}}$] (3,-3)
+ (3,-3) to (0,-3) 
+ (0,-3) to[dcvsource, v<=$U_i$] (0,0)
+;\end{circuitikz}
+\vspace{15px}
+
+\Large
+$I_{R_{4}} = \frac{U_{i}}{R_{i}+R_{4}} = \frac{22,9905}{615,1162+650} = 18,1726$ mA\\
+\vspace{25px}
+
+$U_{R_{4}} = R_{4}*I_{R_{4}} = 650*0,1817 = 11,8$ V\\
+
+\end{center}
+\clearpage
+
+\fancyhead[L]{Třetí úloha}
+\fancyhead[R]{\includegraphics[scale=0.025]{pics/fit_logo.png}}
+\section{Třetí úloha (varianta: E)}
+\subsection{Zadání}
+\begin{center}
+
+\normalsize
+Stanovte napětí $U_{R_{4}}$ a proud $I_{R_{4}}$. Použijte metodu uzlových napětí ($U_A$, $U_B$, $U_C$).\\
+\vspace{15px}
+
+$U = 135$ V, $I_1 = 0.55$ A, $I_2 = 0.65$ A$, R_{1} = 52$  $\Omega, R_{2} = 42$  $\Omega, R_{3} = 52$  $\Omega, R_{4} = 42$  $\Omega,$\\$R_{5} = 21$  $\Omega$\\
+\vspace{25px}
+
+\begin{circuitikz}[scale=1.4] \draw
+ (0,0) to (1,0)
+ 
+ (1,-3) to[R=$R_1$, v_<=$U_A$, *-*] (1,0)
+ (1,0) to[R=$R_2$] (4,0)
+ (4,0) to[open, v^=$U_B$] (1,-3) 
+ (4,0) to[R=$R_3$, *-*] (4,-3)
+ (4,0) to[R=$R_5$] (7,0)
+ (7,0) to[dcvsource, v>=$U$] (7,-3)
+ (7,-3) to (4,-3)
+ (4,-3) to[R=$R_4$, v>=$U_C$, i>^=$I_{R_{4}}$, *-*] (1,-3)
+ (4,-3) to (4,-4)
+ (4,-4) to[ioosource, i=$I_1$] (1,-4)
+ (1,-4) to (1,-3)
+ (1,-3) to (0,-3) 
+ (0,-3) to[ioosource, i^=$I_2$] (0,0)
+ 
+ (3.5,0.0005) to[open, l=2](4.5,0.0005)
+ (0.5,0.0005) to[open, l=1](1.5,0.0005)
+ (3.5,-3.65) to[open, l=3](5,-3.65)
+ (-0.5,-3.65) to[open, l=0](2,-3.65)
+ 
+;\end{circuitikz}
+\clearpage
+\end{center}
+
+\subsection{Řešení}
+\begin{center}
+
+\normalsize
+Přepočítáme rezistory na vodivosti a také zdroj napětí na zdroj proudu:\\
+\vspace{15px}
+
+\Large
+$G_1=G_3=\frac{1}{R_1}=\frac{1}{52}=0.0192$ S\\
+\vspace{10px}
+
+$G_2=G_4=\frac{1}{R_2}=\frac{1}{42}=0.0238$ S\\
+\vspace{10px}
+
+$G_5=\frac{1}{R_5}=\frac{1}{21}=0.0476$ S\\
+\vspace{10px}
+
+$I_i=\frac{U}{R_5}=\frac{135}{21}=6.4285$ A\\
+\vspace{25px}
+
+\begin{circuitikz}[scale=1.4] \draw
+ (0,0) to (1,0)
+ (1,-3) to[R=$G_1$, v_<=$U_A$, *-*] (1,0)
+ (1,0) to[R=$G_2$] (4,0)
+ (4,0) to[open, v^=$U_B$] (1,-3) 
+ (4,0) to[R=$G_3$, *-*] (4,-3)
+ (4,0) to[R=$G_5$] (7,0)
+ (7,0) to[ioosource, i<=$I_i$] (7,-3)
+ (7,-3) to (4,-3)
+ (4,-3) to[R=$G_4$, v>=$U_C$, i>^=$I_{R_{4}}$, *-*] (1,-3)
+ (4,-3) to (4,-4)
+ (4,-4) to[ioosource, i=$I_1$] (1,-4)
+ (1,-4) to (1,-3)
+ (1,-3) to (0,-3) 
+ (0,-3) to[ioosource, i^=$I_2$] (0,0)
+ 
+ (3.5,0.0005) to[open, l=2](4.5,0.0005)
+ (0.5,0.0005) to[open, l=1](1.5,0.0005)
+ (3.5,-3.65) to[open, l=3](5,-3.65)
+ (-0.5,-3.65) to[open, l=0](2,-3.65)
+ 
+;\end{circuitikz}
+\vspace{25px}
+
+\normalsize
+Sestavíme matice pro výpočet:
+\vspace{15px}
+
+$\begin{bmatrix}
+G_1+G_2 & -G_2 & 0\\
+-G_2 & G_2+G_3+G_5 & -(G_3+G_5)\\
+0 & -(G_3+G_5) & G_2+G_3+G_5\\
+\end{bmatrix}
+*
+\begin{bmatrix}
+U_A\\
+U_B\\
+U_C\\
+\end{bmatrix}
+=
+\begin{bmatrix}
+I_2\\
+I_i\\
+-I_1-I_i\\
+\end{bmatrix}$
+\vspace{15px}
+
+$\begin{bmatrix}
+0.043 & -0.0238 & 0\\
+-0.0238 & 0.0906 & -0.0668\\
+0 & -0.0668 & 0.0906\\
+\end{bmatrix}
+*
+\begin{bmatrix}
+U_A\\
+U_B\\
+U_C\\
+\end{bmatrix}
+=
+\begin{bmatrix}
+0.65\\
+6.4285\\
+-6.9785\\
+\end{bmatrix}$
+\clearpage
+
+Spočítáme determinant matice:\\
+\vspace{10px}$\Delta =[0.043*0.0906*0.0906]-[(-0.0238*(-0.0238)*0.0906)+(0.043*(-0.0668)*(-0.0668)]$\\
+\vspace{10px}
+
+$\Delta =0.000109763$\\
+\vspace{15px}
+
+Následně upravíme původní matici pro výpočet $U_C$ tak, že místo hodnot ze třetího sloupce matice dosadíme hodnoty z matice proudů a vypočítáme její determinant:
+\vspace{15px}
+
+$\Delta_C\begin{bmatrix}
+G_1+G_2 & -G_2 & I_2\\
+-G_2 & G_2+G_3+G_5 & I_i\\
+0 & -(G_3+G_5) & -I_1-I_i\\
+\end{bmatrix}$\\
+\vspace{10px}
+
+$\Delta_C\begin{bmatrix}
+0.043 & -0.0238 & 0.65\\
+-0.0238 & 0.0906 & 6.4285\\
+0 & -0.0668 & -6.9785\\
+\end{bmatrix}$
+\vspace{10px}
+
+$\Delta_C =[(0.043*0.0906*(-6.9785))+((-0.0238)*(-0.0668)*(0.65)]-[(-0.0238*(-0.0238)*(-6.9785))+(6.4285*(-0.668)*0.043)]$\\
+\vspace{10px}
+
+$\Delta_C=-0.003735319$\\
+\vspace{10px}
+
+\normalsize
+Nyní podělíme determinanty mezi sebou, abychom získali napětí $U_C$. Jelikož je toto napětí mezi uzlem 3 a 0, kde je taktéž pouze rezistor $R_4$, jsou napětí $U_C$ a $U_{R_4}$ shodná:\\
+\vspace{15px}
+
+\Large
+$U_C=U_{R_4}=\frac{\Delta_C}{\Delta}=\frac{-0.003735319}{0.000109763}=-34.0307$ V\\
+\vspace{15px}
+
+\normalsize
+Z napětí na rezistoru poté snadno spočítáme proud $I_{R_4}$:\\
+\vspace{15px}
+
+\Large
+$I_{R_4}=\frac{U_{R_4}}{R_4}=\frac{-34.0307}{42}=-0.8102$ A\\
+
+\end{center}
+\clearpage
+
+\fancyhead[L]{Čtvrtá úloha}
+\fancyhead[R]{\includegraphics[scale=0.025]{pics/fit_logo.png}}
+\section{Čtvrtá úloha (varianta: A)}
+\subsection{Zadání}
+\begin{center}
+
+\normalsize
+Pro napájecí napětí platí: $u_1 = U_1*\sin(2\pi ft)$, $u_2 = U_2*\sin(2\pi ft)$. Ve vztahu pro napětí $u_{C_1} = U_{C_1}*\sin(2\pi ft+\varphi_{C_1})$ určete $|{U_{C_1}}|$ a $\varphi_{C_1}$. Použijte metodu smyčkových proudů.
+\vspace{15px}
+
+$U = 35$ V, $U_2 = 55$ V$, R_{1} = 12$  $\Omega, R_{2} = 14$  $\Omega, R_{3} = 10$  $\Omega, L_{1} = 120$ mH, $L_{2} = 21$ mH, $C_1 = 200$ $\mu$F, $C_2 = 105$ $\mu$F, $f = 70$ Hz\\
+\vspace{25px}
+
+\begin{circuitikz}[scale=1.4] \draw
+(0,0) to[american inductor=$L_1$, *-] (2,0)
+(2,0) to[R=$R_2$, -*] (4,0)
+(4,0) to[american inductor=$L_2$, -*] (6,0)
+(4,0) to[C=$C_2$, -*] (4,-2)
+(6,0) to[R=$R_4$] (6,-2)
+(6,-2) to[sV, v<=$U_2$] (4,-2)
+(0,-2) to[C=$C_1$, v<=$u_{C_1}$, i^<=$i_{C_1}$] (4,-2)
+(0,-2) to[sV, v<=$U_1$] (0,0)
+(0,0) to (0,2)
+(0,2) to[R=$R_1$] (6,2)
+(6,2) to (6,0)
+;\end{circuitikz}
+
+\end{center}
+\subsection{Řešení}
+\begin{center}
+
+\normalsize
+Nejprve si spočítáme úhlovou rychlost $\omega$ a také reaktance cívek a kondenzátorů:\\
+\vspace{15px}
+
+\Large
+$\omega = 2\pi f= 2*3.14*70=439.8229$ rad/s\\
+\vspace{10px}
+
+$X_{L_1}=j\omega L_1=j439.8229*120*10^{-3}=j52.7787$ $\Omega$\\
+\vspace{10px}
+
+$X_{L_2}=j\omega L_2=j439.8229*100*10^{-3}=j52.7787$ $\Omega$\\
+\vspace{10px}
+
+$X_{C_1}=-j\frac{1}{\omega C_1}=-j\frac{1}{200*10^{-6}}=-j11.3682$ $\Omega$\\
+\vspace{10px}
+
+$X_{C_2}=-j\frac{1}{\omega C_2}=-j\frac{1}{105*10^{-6}}=-j21.6537$ $\Omega$\\
+\clearpage
+
+\normalsize
+Dále si v obvodu zvolíme smyčkové proudy a sestavíme matice pro jejich výpočet:
+\vspace{15px}
+
+\begin{circuitikz}[scale=1.4] \draw
+(0,0) to[american inductor=$L_1$] (2,0)
+(2,0) to[R=$R_2$, -*] (4,0)
+(4,0) to[american inductor=$L_2$, -*] (6,0)
+(4,0) to[C=$C_2$, -*] (4,-2)
+(6,0) to[R=$R_4$] (6,-2)
+(6,-2) to[sV, v<=$U_2$] (4,-2)
+(0,-2) to[C=$C_1$, v<=$u_{C_1}$, i^<=$i_{C_1}$] (4,-2)
+(0,-2) to[sV, v<=$U_1$] (0,0)
+(0,0) to (0,2)
+(0,2) to[R=$R_1$] (6,2)
+(6,2) to (6,0)
+
+(2,1) node[scale=3]{$\circlearrowright$}
+(2,1) node{$I_C$}
+(2.85,-1) node[scale=3]{$\circlearrowright$}
+(2.85,-1) node{$I_A$}
+(5.25,-1) node[scale=3]{$\circlearrowright$}
+(5.25,-1) node{$I_B$}
+;\end{circuitikz}
+\vspace{15px}
+
+\normalsize
+$\begin{bmatrix}
+X_{L_1}+R_2+X_{C_2}+X_{C_1} & -X_{C_2} & -(X_{L_1}+R_2)\\
+-X_{C_2} & R_3+X_{C_2}+X_{L_1} & -X_{L_2}\\
+-(X_{L_1}+R_2) & -X_{L_2} & R_1+X_{L_2}+R_2+X_{L_1}\\
+\end{bmatrix}
+*
+\begin{bmatrix}
+I_A\\
+I_B\\
+I_C\\
+\end{bmatrix}
+=
+\begin{bmatrix}
+-U_1\\
+-U_2\\
+0\\
+\end{bmatrix}$
+\vspace{15px}
+
+\normalsize
+$\begin{bmatrix}
+14+j19.7568 & j21.6537 & -14-j52.7787\\
+j21.6537 & 10+j22.3285 & -j43.9822\\
+-14-j52.7787 & -j43.9822 & 26+j96.7609\\
+\end{bmatrix}
+*
+\begin{bmatrix}
+I_A\\
+I_B\\
+I_C\\
+\end{bmatrix}
+=
+\begin{bmatrix}
+-35\\
+-55\\
+0\\
+\end{bmatrix}$
+\vspace{15px}
+
+\normalsize
+Vypočítáme determinant:
+\vspace{10px}
+
+$\Delta\begin{bmatrix}
+14+j19.7568 & j21.6537 & -14-j52.7787\\
+j21.6537 & 10+j22.3285 & -j43.9822\\
+-14-j52.7787 & -j43.9822 & 26+j96.7609\\
+\end{bmatrix}$
+\vspace{10px}
+
+$\Delta=d_1-d_2$\\
+\vspace{10px}
+
+$d_1=[(14+j19.7568)*(10+j22.3285)*(26+j96.7609)]+[(j21.6537)*(-j43.9822)*(-14-j52.7787)]+[(-14-j52.7787)*(j21.6537)*(-j43.9822)]$\\
+\vspace{10px}
+
+$d_2=[(-14-j52.7787)*(10+j22.3285)*(-14-j52.7787)]+[(j21.6537)*(j21.6537)*(26+j96.7609)]+[(14+j19.7568)*(-j43.9822)*(-j43.9822)]$\\
+\vspace{15px}
+
+$\Delta=14305.6583+j10226.7032$\\
+\vspace{10px}
+\clearpage
+
+Upravíme matici pro výpočet $I_A$:
+\vspace{15px}
+
+\normalsize
+$A\begin{bmatrix}
+-U_1 & -X_{C_2} & -(X_{L_1}+R_2)\\
+-U_2 & R_3+X_{C_2}+X_{L_1} & -X_{L_2}\\
+0 & -X_{L_2} & R_1+X_{L_1}+R_2+X_{L_1}\\
+\end{bmatrix}$
+\vspace{10px}
+
+\large
+Po dosazení:
+\vspace{15px}
+
+\normalsize
+$\A\begin{bmatrix}
+-35 & j21.6537 & -14-j52.7787\\
+-55 & 10+j22.3285 & -j43.9822\\
+0 & -j43.9822 & 26+j96.7609\\
+\end{bmatrix}$
+\vspace{15px}
+
+Opět vypočítáme determinant:\\
+\vspace{10px}
+
+$\Delta_A=d_1-d_2$\\
+\vspace{15px}
+
+$d_1=[(-35)*(10+j22.3285)*(26+j96.7609)]+[(-55)*(-j43.9822)*(-14-j52.7787)]$\\
+\vspace{10px}
+
+$d_2=[(j21.6537)*(-55)*(26+j96.7609)]+[(-j43.9822)*(-j43.9822)*(-35)]$\\
+\vspace{10px}
+
+$\Delta_A=14305.6583+j10226.7032$\\
+\vspace{15px}
+
+Podělíme determinanty mezi sebou pro výpočet $I_A$. Jelikož se kondenzátor $C_1$ nachází na větvi, která nesousedí s jinými smyčkami, bude se smyčkový proud $I_A$ rovnat proudu $i_{C_1}$:\\
+\vspace{15px}
+
+\Large
+$I_A=i_{C_1}=\frac{\Delta_A}{\Delta}=\frac{11248.2564-j57086.753}{14305.6583+j10226.7032}=-1.3675-j3.0128$ A
+\vspace{15px}
+
+\normalsize
+Jelikož známe proud, můžeme vypočítat napětí $U_{C_1}$ na příslušném kondenzátoru:
+\vspace{15px}
+
+\large
+$U_{C_1}=X_{C_1}*I_A=-j11.3682*-1.3675-j3.0128=-34.251+j15.5465$ V
+\vspace{15px}
+
+\normalsize
+Spočítáme velikost napětí na kondenzátoru $C_1$:
+\vspace{15px}
+
+\large
+$|U_{C_1}|=\sqrt{(-34.251)^2+(15.5465)^2}=37.6141$ V\\
+\vspace{15px}
+
+\normalsize
+Nakonec vypočítáme fázový posun mezi reálnou a imaginární složkou napětí na kondenzátoru $C_1$:
+\vspace{15px}
+
+\Large
+$\varphi_{U_{C_1}}=\tan^{-1}\frac{U_{C_{1_{im}}}}{U_{C_{1_r}}}=\tan^{-1}\frac{15.5465}{-34.251}=\tan^{-1} (-0.4538)=-24.4132\degree$\\
+\vspace{15px}
+
+\normalsize
+A ještě upravíme: \large$\varphi_{U_{C_1}}=360\degree-24.4132\degree=335.5868\degree$
+
+
+
+\end{center}
+\clearpage
+
+\fancyhead[L]{Pátá úloha}
+\fancyhead[R]{\includegraphics[scale=0.025]{pics/fit_logo.png}}
+\section{Pátá úloha (varianta: F)}
+\subsection{Zadání}
+\begin{center}
+Sestavte diferenciální rovnici popisující chování obvodu na obrázku, dále ji upravte dosazením hodnot parametrů. Vypočítejte analytické řešení $i_L = f(t)$. Proveďte kontrolu výpočtu dosazením do sestavené diferenciální rovnice.\\
+\vspace{10px}
+
+$U = 45$ V, $L = 30$ H, $R = 15$ $\Omega$, $i_L(0) = 4$ A
+\vspace{15px}
+
+\begin{circuitikz}[scale=1.4] \draw
+(0,0) to[R=$R$] (2,0)
+(2,0) to[american inductor=$L$, i>^=$i_L$] (2,-2)
+(0,-2) to[sV, v<=$U$] (0,0)
+(0,-2) to (2,-2)
+;\end{circuitikz}
+\vspace{15px}
+
+\end{center}
+\subsection{Řešení}
+\begin{center}
+Při řešení využijeme axiómu pro proud $i'_L$ a též využijeme druhého Kirchhoffova zákona.
+\vspace{10px}
+
+\Large$i'_L = \frac{1}{L}*u_L$\\
+\vspace{10px}
+
+\normalsize Sestavíme rovnici dle II. KZ: $R*i_L + u_L - U = 0$, Vyjádříme $u_L$ a dosadíme do axiómu:\\
+\vspace{10px}
+
+\Large $i'_L = \frac{1}{L}*(U-R*i_L)$
+\vspace{10px}
+
+\normalsize Dosadíme hodnoty ze zadání (kromě $i_L$):
+\vspace{10px}
+
+\Large $i'_L = \frac{1}{30}*(45-15i_L)$
+\vspace{10px}
+
+\normalsize Úpravami získáme rovnici ve tvaru $y' + y = konstanta$:\\
+\vspace{10px}
+
+\Large $i'_L + \frac{1}{2}i_L = \frac{3}{2}$\\
+\vspace{10px}
+
+\normalsize Z rovnice použijeme koeficienty proměnných pro určení parametru $\lambda$:
+\vspace{10px}
+
+\Large $\lambda + \frac{1}{2} = 0$ ; $\lambda = -\frac{1}{2}$\\
+\vspace{10px}
+
+\normalsize Očekávaný stav $i_L$ popisuje rovnice $i_L(t) = c(t) * e^\lambda$. Dosadíme:\\
+\vspace{10px}
+
+\Large $i_L(t) = c(t) * e^{-\frac{1}{2}(t)}$
+\vspace{10px}
+
+\normalsize Rovnici zderivujeme pro získání $i'_L$:\\
+\vspace{10px}
+
+\Large $i'_L(t) = c(t)' * e^{-\frac{1}{2}(t)} - \frac{1}{2} c(t) * e^{-\frac{1}{2}(t)}$\\
+\vspace{10px}
+
+\normalsize Následně dosadíme $i'_L$ a $i_L$ do rovnice, ze které jsme určili parametr $\lambda$:
+\vspace{10px}
+
+\Large $i'_L + \frac{1}{2}i_L = \frac{3}{2}$\\
+\vspace{10px}
+
+$c(t)' * e^{-\frac{1}{2}(t)} - \frac{1}{2} c(t) * e^{-\frac{1}{2}(t)} + - \frac{1}{2} c(t) * e^{-\frac{1}{2}(t)} = \frac{3}{2}$\\
+\vspace{10px}
+
+$c(t)' * e^{-\frac{1}{2}(t)} = \frac{3}{2} \Rightarrow c(t)' = \frac{\frac{3}{2}}{e^{-\frac{1}{2}(t)}} \Rightarrow c(t) = \int \frac{\frac{3}{2}}{e^{-\frac{1}{2}(t)}}$\\
+\vspace{10px}
+
+\normalsize Vyřešíme integrál:\\
+\vspace{10px}
+
+\Large
+$\int \frac{\frac{3}{2}}{e^{-\frac{1}{2}(t)}} = \frac{3}{2} * \frac{1}{2} * 2 * e^{\frac{1}{2}(t)} + c = \frac{3}{2} * e^{\frac{1}{2}(t)} + c$\\
+\vspace{10px}
+
+\normalsize Zintegrovaný výsledek dosadíme do původní rovnice, kterou jsme dříve derivovali:
+\vspace{10px}
+
+\Large
+$i_L(t) = (\frac{3}{2} * e^{\frac{1}{2}(t)} + c) * e^{-\frac{1}{2}(t)}$
+\vspace{10px}
+
+\normalsize Ze zadání víme, že se $i_L$ při čase t = 0, rovná 4 A. Dosadíme tedy tuto hodnotu pro vypočtení konstanty c, která vznikla při integrování:
+\vspace{10px}
+
+\Large
+$4 = (\frac{3}{2} * e^{\frac{1}{2}(0)} + c) * e^{-\frac{1}{2}(0)}$
+\vspace{10px}
+
+$4 = \frac{3}{2} + c \Rightarrow c = \frac{5}{2}$
+\vspace{10px}
+
+\normalsize Následně dosadíme zpětně do původní rovnice pro získání analytického řešení $i_L$:
+\vspace{10px}
+
+\Large $i_L(t) = (\frac{3}{2} * e^{\frac{1}{2}(t)} + \frac{5}{2}) * e^{-\frac{1}{2}(t)}$
+\vspace{10px}
+
+\normalsize Na závěr provedeme kontrolu výpočtem. Ze zadání víme, že $i_L(0) = 4$ A. Ověříme:\\
+\vspace{10px}
+
+\Large $i_L(0) = (\frac{3}{2} * e^{\frac{1}{2}(0)} + \frac{5}{2}) * e^{-\frac{1}{2}(0)}$
+\vspace{10px}
+
+$i_L(0) = \frac{3}{2} + \frac{5}{2} = 4$ A
+\end{center}
+\clearpage
+
+\fancyhead[L]{Výsledky}
+\fancyhead[R]{\includegraphics[scale=0.025]{pics/fit_logo.png}}
+\section{Výsledky}
+\vspace{30px}
+\begin{center}
+
+{\tabulinesep=1.2mm
+\begin{tabu} {|c|c|}\hline
+Zadání & Výsledky\\ \hline
+1A & $U_{R8} = 19,755$ V, $I_{R8} = 103,974$ mA\\
+\hline
+2E & $U_{R_{4}} = 11,8$ V, $I_{R_{4}} = 18,1726$ mA\\
+\hline
+3F & $U_{R_4} = -34.0307$ V, $I_{R_4} = -0.8102$\\
+\hline
+4A & $|U_{C_1}| = 37.6141$ V, $\varphi_{U_{C_1}} = -24.4132\degree$\\
+\hline
+5F & $i_L(t) = (\frac{3}{2} * e^{\frac{1}{2}(t)} + \frac{5}{2}) * e^{-\frac{1}{2}(t)}$, $i_L(0) = 4$ A\\ \hline       
+\end{tabu}}
+\end{center}
+\end{document}
