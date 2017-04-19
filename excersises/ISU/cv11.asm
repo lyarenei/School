@@ -23,7 +23,7 @@ CEXTERN free
 %defstr ROW_LEN_STR ROW_LEN
 
 ; maximalni delka cesty k souboru
-%define FILENAME_LEN 32
+%define FILENAME_LEN 128
 
 ;
 ; datovy segment
@@ -65,6 +65,7 @@ section .text
 ;   klic. Toto cislo neni soucasti vystupu. Delka retezce za oddelovacem ';' je limitovana makrem
 ;   ROW_LEN vyse.
 main:
+    mov ebp, esp; for correct debugging
   ; vytvorime si misto pro lokalni promenne
   ; [ebp- 4] soubor      -- FILE* (fopen)
   ; [ebp- 8] pocet_radku -- unsigned int, 4B siroky
@@ -156,24 +157,32 @@ main:
   ;   zbytkem kodu v tomhle souboru.
   ;
   ; zde doplnte vas kod
-  xor ecx, ecx
+  xor ebx, ebx
   
   .cykl:
+  push ebx             ; zaloha poctu cyklu  
   mov eax, 4+ROW_LEN   ; delka jedne polozky
-  mul ecx              ; nasobeni poctem cyklu
+  xor edx, edx         ; nulovani kvuli nasobeni
+  mul ebx              ; nasobeni poctem cyklu
   add eax, [ebp-12]    ; ziskani konecne adresy
-  push eax             ; predani konecne adresy pro zapis
+  add eax, 4            ; ziskani ukazatele na uint
+  push eax            ; predani ukazatele na char[]
+  
+  sub eax, 4
+  push eax            ; predani ukazatele na uint
+  
   push format_radku    ; formatovaci retezec
   push dword [ebp-4]   ; nazev souboru
   call fscanf
-  inc ecx
-  add esp,12
+  add esp, 16
+  xor ebx, ebx
+  pop ebx
+  inc ebx               ; inkrementace poctu cyklu
   ; kontrola navratove hodnoty a osetreni chyb
   ; cmp eax,2            ; fscanf vraci pocet uspesne nactenych promennych
   inc ecx
-  cmp dword ecx, [ebp-8]    ; podminka cyklu
+  cmp dword ebx, [ebp-8]    ; podminka cyklu
   jl .cykl
-  jmp .vypis
 
 .serad:
   ; seradime posloupnost dle cisla pred retezcem
@@ -230,21 +239,19 @@ compare_rows:
   ;
   ; zde doplnte vas kod
   
-  push esp
-  mov ebp, esp
   
-  xor eax, eax
-  xor ebx, ebx
+  push ebp
+  mov ebp, esp
   
   mov eax, [ebp+8]
   mov eax, [eax]        ; pristoupeni k prvku na ktery ukazuje adresa v eax
+  push ebx
   mov ebx, [ebp+12]
   mov ebx, [ebx]        ; pristoupeni k prvku na ktery ukazuje adresa v ebx
   
   cmp eax, ebx
   jz equal
-  cmp eax, ebx
-  jg greater
+  ja greater
   mov eax, -1
   jmp end
   
@@ -256,7 +263,8 @@ compare_rows:
   mov eax, 0
   
   end:
+  pop ebx
   mov esp, ebp
-  pop esp
+  pop ebp
 
-  ret
+  ret 
