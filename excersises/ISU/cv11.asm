@@ -32,7 +32,6 @@ section .data
 rezim_souboru db "r",0
 format_pocet  db "%u",0
 format_radku  db "%u;%",ROW_LEN_STR,"[^",13,10,"]",0
-nazev_souboru db "prvni_text.txt", 0
 
 ; chybove hlasky
 re_otevreni  db "Nepodarilo se otevrit soubor",EOL,0
@@ -41,7 +40,7 @@ re_alokace   db "Nepodarilo se alokovat pamet",EOL,0
 
 section .bss
 ; misto pro nazev souboru, vcetne ukoncovaci nuly
-nazevv_souboru resb FILENAME_LEN+1
+nazev_souboru resb FILENAME_LEN+1
 
 ;
 ; kodovy segment
@@ -66,7 +65,6 @@ section .text
 ;   klic. Toto cislo neni soucasti vystupu. Delka retezce za oddelovacem ';' je limitovana makrem
 ;   ROW_LEN vyse.
 main:
-    mov ebp, esp; for correct debugging
   ; vytvorime si misto pro lokalni promenne
   ; [ebp- 4] soubor      -- FILE* (fopen)
   ; [ebp- 8] pocet_radku -- unsigned int, 4B siroky
@@ -77,7 +75,7 @@ main:
 
   ; nacteme nazev souboru pomoci ReadString v rw32
   mov ebx,FILENAME_LEN
-  mov edi,nazevv_souboru
+  mov edi,nazev_souboru
   call ReadString
 
 .otevri_soubor:
@@ -158,7 +156,6 @@ main:
   ;   zbytkem kodu v tomhle souboru.
   ;
   ; zde doplnte vas kod
-  
   xor ecx, ecx
   
   .cykl:
@@ -172,9 +169,9 @@ main:
   inc ecx
   add esp,12
   ; kontrola navratove hodnoty a osetreni chyb
-  cmp eax,2            ; fscanf vraci pocet uspesne nactenych promennych
+  ; cmp eax,2            ; fscanf vraci pocet uspesne nactenych promennych
   inc ecx
-  cmp ecx, [ebp-8]
+  cmp dword ecx, [ebp-8]    ; podminka cyklu
   jl .cykl
   jmp .vypis
 
@@ -232,5 +229,34 @@ compare_rows:
   ;   Muzete teda vstupni parametry povazovat za ukazatele na 4B cele cisla bez znamenka.
   ;
   ; zde doplnte vas kod
+  
+  push esp
+  mov ebp, esp
+  
+  xor eax, eax
+  xor ebx, ebx
+  
+  mov eax, [ebp+8]
+  mov eax, [eax]        ; pristoupeni k prvku na ktery ukazuje adresa v eax
+  mov ebx, [ebp+12]
+  mov ebx, [ebx]        ; pristoupeni k prvku na ktery ukazuje adresa v ebx
+  
+  cmp eax, ebx
+  jz equal
+  cmp eax, ebx
+  jg greater
+  mov eax, -1
+  jmp end
+  
+  greater:
+  mov eax, 1
+  jmp end
+  
+  equal:
+  mov eax, 0
+  
+  end:
+  mov esp, ebp
+  pop esp
 
   ret
