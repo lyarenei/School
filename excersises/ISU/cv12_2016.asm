@@ -31,8 +31,8 @@ main:
 
 ; *** ZDE DOPLNTE VAS KOD ***
     
-    push dword [sphereRadius]
     push dword [sphereRadius+4]
+    push dword [sphereRadius]
     ;push qword [sphereRadius]    ; 64b verze
     
     call SphereVolume
@@ -54,9 +54,9 @@ main:
 
 ; *** ZDE DOPLNTE VAS KOD ***
     
-    push dword [sphereRadius]         ; radius upper 32b
-    push dword [sphereRadius+4]       ; radius lower 32b
-    ;push qword [sphereRadius]            ;64b verze
+    push dword [sphereRadius+4]
+    push dword [sphereRadius]       
+    ;push qword [sphereRadius]         ;64b verze
     
     push dword [sphereCenter+8]       ; centerZ
     push dword [sphereCenter+4]       ; centerY
@@ -96,17 +96,19 @@ SphereVolume:
 
 ; *** ZDE DOPLNTE VAS KOD ***
     
-    fld qword [ebp+4]           ;r
-    fldpi                       ;pi
-    fld qword [const3]          ;3
-    fld qword [const4]          ;4
+    fld qword [const4]              ; st0=4
+    fld qword [const3]              ; st0=3
+    fdivp                           ; st1=4/3 a pop => st0=4/3
     
-    fdiv st1                    ;4/3
-    fxch st3                    ;r
-    fmul st0                    ;r*r
-    fmul st0                    ;r*r*r
-    fmul st2                    ;r^3 * pi
-    fmul st3                    ;4/3 * pi * r^3 v st0
+    fldpi                           ; st0=pi st1=4/3
+    
+    fld qword [ebp+8]               ; st0=r st1=pi st2=4/3
+    fld st0                         ; st0=r st1=r st2=pi st3=4/3
+    fmul st0                        ; st0=r*r st1=r st2=pi st3=4/3
+    fmulp                           ; st0=r^3 st1=pi st2=4/3
+    
+    fmulp                           ; st0=pir^3 st1=4/3
+    fmulp                           ; st0=4/3 * pi * r^3
     
     mov esp, ebp
     pop ebp
@@ -141,31 +143,35 @@ IsInSphere:
 
 ; *** ZDE DOPLNTE VAS KOD ***
     
-    fld dword [ebp+20]      ;x0
-    fld dword [ebp+8]       ;x
-    fsub st1                ;x-x0
-    fmul st0                ;^2
+    fld qword [ebp+32]       ; st0=r
     
-    fld dword [ebp+24]      ;y0
-    fld dword [ebp+12]      ;y
-    fsub st1                ;y-y0
-    fmul st0                ;^2    
+    fld dword [ebp+20]      ;st0=x0 st1=r
+    fild dword [ebp+8]       ;st0=x st1=x0 st2=r
+    fsubp                   ;st0=x-x0 st1=r
+    fld st0                 ;st0=x-x0 st1=x-x0 st2=r
+    fmulp                   ;st0=x^2 st1=r
+    
+    fld dword [ebp+24]      ;st0=y0 st1=x^2 st2=r
+    fild dword [ebp+12]      ;st0=y st1=y0 st2=x^2 st3=r
+    fsubp st1               ;st0=y-y0 st1=x^2 st2=r
+    fld st0                 ;st0=y-y0 st1=y-y0 st2=x^2 st3=r
+    fmulp                   ;st0=y^2 st1=x^2 st2=r    
 
-    fld dword [ebp+28]      ;z0
-    fld dword [ebp+16]      ;z
-    fsub st1                ;z-z0
-    fmul st0                ;^2
+    fld dword [ebp+28]      ;st0=z0 st1=y^2 st2=x^2 st3=r
+    fild dword [ebp+16]      ;st0=z st1=z0 st2=y^2 st3=x^2 st4=r
+    fsubp                   ;st0=z-z0 st1=y^2 st2=x^2 st3=r
+    fld  st0                ;st0=z-z0 st1=z-z0 st2=y^2 st3=x^2 st4=r
+    fmulp                   ;st0=z^2 st1=y^2 st2^x^2 st3=r
     
-    fadd st2                ;y^2 + z^2
-    fadd st4                ;x^2 + y^2 + z^2
     
-    fcomp qword [ebp+4]     ; porovnani st0 a r
+    faddp                   ;st0=z^2 + y^2 st1=x^2 st3=r
+    faddp                   ;st0=x^2 + y^2 + z^2 st1=r
+    fsqrt                   ;st0=sqrt(st0) st1=r
     
-    fstsw ax                ; ulozeni flagu FPU do ax
-    sahf                    ; ulozeni flagu z ax do CPU flagu
+    fcomip
     
     jb mensi_r
-    mov eax, 0
+        mov eax, 0
     jmp end
     
     mensi_r:
@@ -175,3 +181,4 @@ IsInSphere:
     mov esp, ebp
     pop ebp
     ret
+    
