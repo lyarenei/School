@@ -148,29 +148,25 @@ ComputePI:
     mov ecx, [ebp+8]                ; limit iteraci
     mov eax, 0                      ; inside
     push dword 1                    ; 1 pro porovnavani
-    fild dword [esp]
+    fild dword [esp]                ; st0=1
     
     do:
     push ecx                        ; zaloha iteraci
     push eax                        ; zaloha inside
-    call GetRandomNumber            ; st0=x
-    fld st0                         ; st0=x st1=x
-    fmulp                           ; st0=x^2
-    
+    call GetRandomNumber            ; st0=x st1=1
+    fld st0                         ; st0=x st1=x st2=1
+    fmulp                           ; st0=x^2 st1=1    
 
-    call GetRandomNumber            ; st0=y st1=x^2
+    call GetRandomNumber            ; st0=y st1=x^2 st2=1
     pop eax                         ; obnoveni inside
     pop ecx                         ; obnoveni pocitani
     
-    fld st0                         ; st0=y st1=y st2=x^2
-    fmulp                           ; st0=y^2 st1=x^2
+    fld st0                         ; st0=y st1=y st2=x^2 st3=1
+    fmulp                           ; st0=y^2 st1=x^2 st3=1
     
-    fadd                           ; st0=y^2 + x^2
+    fadd                            ; st0=y^2 + x^2 st1=1
     
-    fild dword [esp]                ; st0=1 st1=y^2 + x^2
-    fxch st1                        ; st0=y^2 + x^2 st1=1
-    
-    fcomip                          ; porovnani
+    fcomip                          ; porovnani st0 a st1
     
     ja cykl
         inc eax                     ; inkrementace inside
