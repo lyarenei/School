@@ -1,0 +1,97 @@
+; Doplnte implementaci programu, ktery vypocte sumu celych cisel v zadanem intervalu.
+; int main()
+; {
+;     char a = ReadInt8();
+;     char b = ReadInt8();
+; 
+;     if(b < a)
+;         std::swap(a, b);
+;     
+;     WriteString("SUM n <");
+;     WriteInt8(a);
+;     WriteString("; ");
+;     WriteInt8(b);
+;     WriteString("> = ");
+;     
+;     int sum = ((b + a) * (b - a + 1)) / 2;
+;     
+;     WriteNewLine();
+;     
+;     return 0;
+; }
+
+%include "rw32-2017.inc"
+
+section .data
+    strA db "SUM n <",0
+    strB db "; ",0
+    strC db "> = ",0
+    range: resb 2
+
+section .text
+main:
+    mov ebp, esp
+    
+    call ReadInt8
+    mov bl, al
+    
+    call ReadInt8
+    mov bh, al
+    
+    ; Prohozeni hodnot, pokud BL > BH
+    cmp bh, bl
+    jge dontSwap
+    xchg bh, bl
+dontSwap:
+
+    ; Ulozeni hodnot do pole v pameti
+    mov [range], bl
+    mov [range+1], bh
+    
+    mov esi, strA
+    call WriteString
+    
+    ; Prectete prvni cislo do AL
+    
+    ; *** ZDE DOPLNTE VAS KOD ***    
+    mov byte al, [range]
+   
+     call WriteInt8
+    mov esi, strB
+    call WriteString
+    
+    ; Prectete druhe cislo do AL
+    
+    ; *** ZDE DOPLNTE VAS KOD ***
+    mov byte al, [range+1]
+    
+    call WriteInt8
+    mov esi, strC
+    call WriteString
+    
+    ; Nactete 8-bit hodnoty A a B (se znamenkem) z pole "range" (v tomto poradi) 
+    ; a vypoctete sumu vsech celych cisel v tomto intervalu.
+    ; Pocitejte na 32 bitech a vysledek ulozte v registru EAX.
+    ; Pouzijte vzorec: ((B + A) * (B - A + 1)) / 2
+    
+    ; *** ZDE DOPLNTE VAS KOD ***
+    xor eax, eax
+    xor ebx, ebx
+    xor ecx, ecx    
+    
+    movsx ecx, byte [range]
+    movsx eax, byte [range+1]
+    movsx ebx, byte [range]
+    
+    add ecx, eax
+    sub eax, ebx
+    inc eax
+    
+    imul eax, ecx
+    mov ebx, 2
+    idiv ebx    
+    
+    call WriteInt32
+    call WriteNewLine
+    
+    ret
