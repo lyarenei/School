@@ -1,0 +1,38 @@
+%include "rw32-2017.inc"
+
+section .data
+    ; write your data here
+
+section .text
+main:
+    mov ebp, esp
+    mov eax, 1
+    mov ebx, 1
+    mov ecx, 1
+    
+    ; EAX = (-381 * EAX) - 25 - (EAX / EBX) + (8 * ECX) - 935
+    
+    push eax            ;zaloha eax
+    push ebx            ;zaloha ebx
+    push ecx            ;zaloha ecx
+    
+    idiv ebx            ;ax = eax / ebx
+    cwde                ;ax na 32bit
+    push eax            ;zaloha druhe zavorky
+    
+    mov eax, [ebp-12]   ;hodnota v puvodnim ecx
+    imul eax, 8         ;eax = 8 * eax
+    push eax            ;zaloha treti zavorky 
+    
+    mov eax, [ebp-4]    ;obnoveni puvodniho eax
+    mov ebx, -381       ;ebx = -381
+    imul ebx            ;eax = eax * ebx
+    
+    sub eax, 25         ;eax = eax - 25
+    sub eax, [esp+4]    ;eax = eax - druha zavorka
+    add eax, [esp]      ;eax = eax + treti zavorka
+    sub eax, 935        ;eax = eax - 935
+
+    add esp, 20         ;uklid
+    xor eax, eax
+    ret
