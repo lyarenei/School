@@ -1,0 +1,299 @@
+%include "rw32-2017.inc"
+
+section .data
+    matrix_3i dd    1, 0, 0, \
+                    0, 1, 0, \
+                    0, 0, 1
+    matrix_4i dd    1, 0, 0, 0, \
+                    0, 1, 0, 0, \
+                    0, 0, 1, 0, \
+                    0, 0, 0, 1
+    matrix_3f dd    1.5, 0.0, 0.0, \
+                    0.0, 1.5, 0.0, \
+                    0.0, 0.0, 1.5
+    matrix_4f dd    1.25, 0.0, 0.0, 0.0, \
+                    0.0, 1.25, 0.0, 0.0, \
+                    0.0, 0.0, 1.25, 0.0, \
+                    0.0, 0.0, 0.0, 1.25
+    vector_3i dd    1, 2, 3
+    vector_4i dd    1, 2, 3, 4
+    vector_3f dd    1.0, 2.0, 3.0
+    vector_4f dd    1.0, 2.0, 3.0, 4.0
+    vector_out dd   0, 0, 0, 0
+
+section .text
+main:
+    mov ebp, esp; for correct debugging
+    push ebp
+    mov ebp, esp
+    
+    ; Test matice 4x4 (INT) a vektoru o delce 4 (INT)
+    push vector_out
+    push 0
+    push 4
+    push vector_4i
+    push 4
+    push matrix_4i
+    call MatVecMultiply
+    add esp, 6*4
+    
+    call WriteHex32
+    call WriteNewLine
+    
+    push 4
+    push vector_out
+    call ShowVector
+    add esp, 2*4
+    
+    ; Test matice 4x4 (FLOAT) a vektoru o delce 4 (FLOAT)
+    push vector_out
+    push 3
+    push 4
+    push vector_4f
+    push 4
+    push matrix_4f
+    call MatVecMultiply
+    add esp, 6*4
+    
+    call WriteHex32
+    call WriteNewLine
+    
+    push 4
+    push vector_out
+    call ShowVector
+    add esp, 2*4
+    
+    ; Test matice 3x3 (FLOAT) a vektoru o delce 3 (INT)
+    push vector_out
+    push 1
+    push 3
+    push vector_3i
+    push 3
+    push matrix_3f
+    call MatVecMultiply
+    add esp, 6*4
+    
+    call WriteHex32
+    call WriteNewLine
+    
+    push 3
+    push vector_out
+    call ShowVector
+    add esp, 2*4
+    
+    ; Test matice 3x3 (INT) a vektoru o delce 3 (FLOAT)
+    push vector_out
+    push 2
+    push 3
+    push vector_3f
+    push 3
+    push matrix_3i
+    call MatVecMultiply
+    add esp, 6*4
+    
+    call WriteHex32
+    call WriteNewLine
+    
+    push 3
+    push vector_out
+    call ShowVector
+    add esp, 2*4
+    
+    ; Test matice 4x4 (INT) a vektoru o delce 3 (INT) -- nelze provest
+    push vector_out
+    push 0
+    push 3
+    push vector_3i
+    push 4
+    push matrix_4i
+    call MatVecMultiply
+    add esp, 6*4
+    
+    call WriteHex32
+    call WriteNewLine
+    
+    push 3
+    push vector_out
+    call ShowVector
+    add esp, 2*4
+
+    xor eax, eax
+    mov esp, ebp
+    pop ebp
+    ret
+
+; MatVecMultiply(int/float *pMatrix, int matSize, int/float *pVector, int vecSize, unsigned int types, float *pVecOut)
+; Implementujte funkci pro nasobeni ctvercove matice "pMatrix" o velikosti "matSize" 
+; a sloupcoveho vektoru "pVector" o delce "vecSize" (tedy Ax = b, kde A je matice, x a b jsou sloupcove vektory).
+;
+; Argumenty funkce jsou v poradi CDECL a maji nasledujici vyznam:
+; - pMatrix - vstupni matice ve formatu INT nebo FLOAT (32bit)
+; - matSize - velikost vstupni matice (32bit INT)
+; - pVector - vstupni vektor ve formatu INT nebo FLOAT (32bit)
+; - vecSize - delka vstupniho vektoru (32bit INT)
+; - types   - bitove pole udavajici typ hodnot v matici a vektoru viz. dale (32bit)
+; - pVecOut - vystupni vektor typu FLOAT (32bit)
+;
+; Funkci implementujte tak, ze navratova hodnota bude v EAX:
+; - EAX = 0 pokud JE nasobeni provedeno
+; - EAX = -1 pokud NENI mozne nasobeni provest
+;
+; Soucin matice a vektoru (jehoz vysledkem je vektor) ulozte ve formatu float 
+; (32bitove cislo s plovouci desetinnou carkou) do pole daneho parametrem "pVecOut".
+;
+; Vstupni matice a vektor mohou byt (nezavisle na sobe) typu FLOAT nebo INT (v obou pripadech 32 bitu),
+; vystup vzdy FLOAT. Datovy typ matice a vektoru je specifikovan jako bitove pole:
+; "types" & 1 = 1 pokud je MATICE typu FLOAT, jinak je INT
+; "types" & 2 = 1 pokud je VEKTOR typu FLOAT, jinak je INT
+; V OBOU pripadech provadejte vypocet pomoci jednotky FPU
+;
+; Nasobeni matice a vektoru lze implementovat jako:
+; for(int i = 0; i < N; ++i) {
+;   for(int j = 0; j < N; ++j) {
+;       pVecOut[i] += pMatrix[i*N + j] * pVector[j]
+;   }
+; }
+MatVecMultiply:
+; *** ZDE DOPLNTE VAS KOD ***
+; Nemodifikujte datovy segment, ani zpusob volani teto funkce
+    
+    push ebp
+    mov ebp, esp
+; - pMatrix - vstupni matice ve formatu INT nebo FLOAT (32bit)                          @ ebp+8
+; - matSize - velikost vstupni matice (32bit INT)                                       @ ebp+12
+; - pVector - vstupni vektor ve formatu INT nebo FLOAT (32bit)                          @ ebp+16
+; - vecSize - delka vstupniho vektoru (32bit INT)                                       @ ebp+20
+; - types   - bitove pole udavajici typ hodnot v matici a vektoru viz. dale (32bit)     @ ebp+24
+; - pVecOut - vystupni vektor typu FLOAT (32bit)                                        @ ebp+28
+
+; osetreni agrumentu
+    mov eax, [ebp+8]
+    cmp eax, 0
+    je error
+    
+    mov eax, [ebp+12]
+    cmp eax, 0
+    je error
+    
+    mov eax, [ebp+16]
+    cmp eax, 0
+    je error
+    
+    mov eax, [ebp+20]
+    cmp eax, 0
+    je error
+    
+    mov eax, [ebp+28]
+    cmp eax, 0
+    je error
+    
+; porovnani velikosti, pokud jsou ruzne, nelze nasobit
+    mov eax, [ebp+12]
+    mov ebx, [ebp+20]
+    cmp eax, ebx
+    jne error
+        
+; Nasobeni matice a vektoru lze implementovat jako:
+; for(int i = 0; i < N; ++i) {
+;   for(int j = 0; j < N; ++j) {
+;       pVecOut[i] += pMatrix[i*N + j] * pVector[j]
+;   }
+; }
+    finit
+    mov edi, [ebp+28]                           ; edi=pVecOut
+    mov esi, [ebp+8]                            ; esi=pMatrix
+    sub esp, 4                                  ; int i
+    mov dword [ebp-4], 0                        ; i=0
+    
+    for:
+        mov ecx, 0                              ; int j=0
+        fldz                                    ; suma nasobeni radku
+        for_in:           
+            ; zjisteni typu cisla a jeho nacteni do FPU (matice)
+            mov eax, [ebp+24]                   ; nacteni bit. masky typu
+            mov ebx, 1                              
+            and eax, ebx                        ; zjisteni typu matice
+            cmp eax, 1
+            je load_mat_float                   ; eax=1 => cislo je FLOAT, jinak INT
+            fild dword [esi]                    ; st0=pMatrix[i*N+j]
+            jmp load_vec
+            
+            load_mat_float:
+            fld dword [esi]                     ; st0=pMatrix[i*N+j]
+            
+            ; zjisteni typu cisla a jeho nacteni do FPU (vektor)
+            load_vec:
+            push esi                            ; zaloha pozice pMatrix
+            mov esi, [ebp+16]                   ; esi=pVector
+            mov eax, [ebp+24]                   ; nacteni bit. masky typu
+            mov ebx, 2
+            and eax, ebx
+            cmp eax, 2
+            je load_vec_float                   ; eax=2 => cislo je FLOAT, jinak INT
+            fild dword [esi+(4*ecx)]            ; st0=pVector[j] st1=pMatrix[i*N+j]
+            jmp multiply
+            
+            load_vec_float:
+            fld dword [esi+(4*ecx)]             ; st0=pVector[j] st1=pMatrix[i*N+j]
+            
+            multiply:
+            pop esi                             ; obnoveni pozice pMatrix
+            fmulp
+            faddp
+            add esi, 4                          ; posun v pMatrix
+        
+        inc ecx                                 ; j++
+        cmp ecx, [ebp+12]
+        jne for_in
+    
+    mov ecx, [ebp-4]                            ; ecx=i
+    fstp dword [edi+(4*ecx)]                    ; ulozeni sumy po nasobeni
+    inc dword [ebp-4]                           ; i++
+    mov ecx, [ebp-4]                            ; ecx=i
+    cmp ecx, [ebp+12]
+    jne for
+
+    mov eax, 0                                  ; nasobeni provedeno
+    jmp end
+    
+    error:
+        mov eax, -1                             ; nasobeni nelze provest
+    
+    end:
+    mov esp, ebp
+    pop ebp
+
+    ret
+
+ShowVector:
+    push ebp
+    mov ebp, esp
+    push esi
+    push ecx
+    push eax
+    
+    mov esi, [ebp + 8]
+    xor ecx, ecx
+.show_loop:
+
+    mov eax, [esi + ecx*4]
+    call WriteFloat
+    mov al, ' '
+    call WriteChar
+    
+    mov [esi + ecx*4], dword 0
+    
+    inc ecx
+    cmp ecx, [ebp + 12]
+    jl .show_loop
+    
+    pop eax
+    pop ecx
+    pop esi
+    
+    call WriteNewLine
+    
+    mov esp, ebp
+    pop ebp
+    ret
+    
