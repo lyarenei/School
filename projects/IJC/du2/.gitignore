@@ -1,0 +1,67 @@
+# Object files
+*.o
+*.ko
+*.obj
+*.elf
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+
+# Debug files
+*.dSYM/
+*.su
+
+# VS Code folder
+.vscode/*
+
+# GTAGS from global
+
+GPATH
+GRTAGS
+GTAGS
+
+# additional custom files / folders
+test.txt
+test2.txt
+
+tail
+tail2
+wordcount
+wordcount-dynamic
+
+.testing/*
+
+test.sh
+/tail_C/.vs/tail_C/v15
+/.vs
+/tail_C/.vs/tail_C/v15
+/tail_CPP/.vs/tail_CPP/v15
+/wordcount_C/.vs/wordcount_C/v15
+/.vs
+/tail_C/.vs/tail_C/v15
+/tail_CPP/.vs/tail_CPP/v15
+/tail_CPP/.vs/tail_CPP/v15
+/wordcount_C/.vs/wordcount_C/v15
+/wordcount_C/Debug
+/wordcount_C/wordcount_C/Debug
