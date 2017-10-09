@@ -513,5 +513,16 @@ int main(int argc, char *argv[])
 	test_DLActive();
 
 	printf("\n----------------------- konec příkladu c206 -------------------------\n");
+
+	printf("\n[TEST19]\n");
+	printf("Zrušení zrušeného senamu.\n");
+	printf("~~~~~~~~~~~~~~~~~~~~~~~\n");
+	test_DLDisposeList();
+
+	printf("\n[TEST20]\n");
+	printf("Inicializace neplatného senamu.\n");
+	printf("~~~~~~~~~~~~~~~~~~~~~~~\n");
+	test_DLInitList_invalid();
+
 	return (0);
 }
