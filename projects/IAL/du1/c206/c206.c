@@ -90,7 +90,17 @@ void DLDisposeList(tDLList *L)
 ** uvolněny voláním operace free. 
 **/
 
-    solved = FALSE; /* V případě řešení, smažte tento řádek! */
+    struct tDLElem *tmp = L->First->rptr;
+    while (tmp != NULL)
+    {
+        if (tmp->lptr != NULL)
+            free(tmp->lptr);
+        tmp->lptr = NULL;
+        tmp = tmp->rptr;
+    }
+    L->First = NULL;
+    L->Act = NULL;
+    L->Last = NULL;
 }
 
 void DLInsertFirst(tDLList *L, int val)
@@ -108,14 +118,13 @@ void DLInsertFirst(tDLList *L, int val)
         return;
     }
     tmp->data = val;
+    tmp->lptr = NULL;
+    tmp->rptr = NULL;
 
     // Kontrola stavu seznamu, pokud je seznam prázdný,
     // položka nebude na žádný jiný prvek ukazovat
     if (L->First == NULL)
     {
-        tmp->lptr = NULL;
-        tmp->rptr = NULL;
-
         // To samé ve struktuře seznamu; jediný prvek je prvním i posledním
         L->First = tmp;
         L->Last = tmp;
@@ -123,7 +132,6 @@ void DLInsertFirst(tDLList *L, int val)
     // Seznam není prázdný
     else
     {
-        tmp->lptr = NULL;     // První prvek nemá předka
         tmp->rptr = L->First; // Zápis následníka
         L->First->lptr = tmp; // Zápis nového předka původního prvního prvku
         L->First = tmp;       // Zápis nového prvního prvku do listu
@@ -144,22 +152,19 @@ void DLInsertLast(tDLList *L, int val)
         return;
     }
     tmp->data = val;
+    tmp->lptr = NULL;
+    tmp->rptr = NULL;
 
     // Kontrola stavu seznamu, pokud je seznam prázdný,
     // položka nebude na žádný jiný prvek ukazovat
     if (L->Last == NULL)
-    {
-        tmp->lptr = NULL;
-        tmp->rptr = NULL;
-
-        // To samé ve struktuře seznamu; jediný prvek je prvním i posledním
+    { // To samé ve struktuře seznamu; jediný prvek je prvním i posledním
         L->First = tmp;
         L->Last = tmp;
     }
     // Seznam není prázdný
     else
     {
-        tmp->rptr = NULL;    // Poslední prvek nemá následníka
         tmp->lptr = L->Last; // Zápis předka
         L->Last->rptr = tmp; // Zápis nového následníka původního posledního prvku
         L->Last = tmp;       // Zápis nového posledního prvku do listu
@@ -262,9 +267,15 @@ void DLPostDelete(tDLList *L)
     if (DLActive(L) == 0 || L->Act == L->Last)
         return;
 
-    struct tDLElem *tmp = L->Act->rptr->rptr; // Uložení nového následníka pro Act
-    free(L->Act->rptr);                       // Vymazání prvku za aktivním prvkem
-    L->Act->rptr = tmp;                       // Zápis nového následníka Act
+    struct tDLElem *tmp = L->Act->rptr->rptr; // Uložení nového následníka Act
+    free(L->Act->rptr);                       // Uvolnení následníka Act
+    L->Act->rptr = NULL;
+
+    // Pokud následník uvolněného následníka Act neexistoval...
+    if (tmp != NULL)
+        L->Act->rptr = tmp;
+    else
+        L->Last = L->Act; //.. zapíšeme jej také do listu jako poslední prvek
 }
 
 void DLPreDelete(tDLList *L)
@@ -277,9 +288,18 @@ void DLPreDelete(tDLList *L)
     if (DLActive(L) == 0 || L->Act == L->First)
         return;
 
-    struct tDLElem *tmp = L->Act->lptr->lptr; // Uložení nového předka pro Act
-    free(L->Act->lptr);                       // Vymazání prvku před aktivním prvkem
-    L->Act->lptr = tmp;                       // Zápis nového předka Act
+    if (L->Act->lptr == NULL)
+        return;
+
+    struct tDLElem *tmp = L->Act->lptr->lptr; // Uložení nového předka Act
+    free(L->Act->lptr);                       // Uvolnení předka Act
+    L->Act->lptr = NULL;
+
+    // Pokud předek uvolněného předka Act neexistoval...
+    if (tmp != NULL)
+        L->Act->lptr = tmp;
+    else
+        L->First = L->Act; //.. zapíšeme jej také do listu jako první prvek
 }
 
 void DLPostInsert(tDLList *L, int val)
