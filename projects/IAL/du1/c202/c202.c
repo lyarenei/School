@@ -108,6 +108,8 @@ void stackTop(const tStack *s, char *c)
 ** Pro ověření, zda je zásobník prázdný, použijte dříve definovanou
 ** funkci stackEmpty.
 */
+	if (s == NULL)
+		return;
 
 	if (stackEmpty(s) != 0)
 	{
@@ -131,6 +133,8 @@ void stackPop(tStack *s)
 ** jednoduchost neděláme.
 ** 
 */
+	if (s == NULL)
+		return;
 
 	if (stackEmpty(s) != 0)
 		return;
@@ -147,12 +151,15 @@ void stackPush(tStack *s, char c)
 ** Pro ověření, zda je zásobník plný, použijte dříve definovanou
 ** funkci stackFull.
 */
+	if (s == NULL)
+		return;
 
 	if (stackFull(s) != 0)
 	{
 		stackError(SERR_PUSH);
 		return;
 	}
+
 	s->top++;
 	s->arr[s->top] = c;
 }
