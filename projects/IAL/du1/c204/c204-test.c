@@ -170,6 +170,12 @@ int main(int argc, char *argv[])
   printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
   convert_and_verify("1+1+1+1+1+1+1+1(1+(1+(1+(1+(1+(1+(a*z)+1)+1)+1)+(x-1))/0)*0)-5=", "11+1+1+1+1+1+1111111az*+1++1++1++x1-+0/+0*++5-=");
 
+  printf("[FINAL TEST] Convert invalid expression\n");
+  printf("Is guarded by Assert() in convert_and_verify(), so it should be the last test\n");
+  printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+  char *c = NULL;
+  convert_and_verify(c, "");
+
   return (0);
 }
 
