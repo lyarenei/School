@@ -49,10 +49,14 @@ int solved;
 */
 void untilLeftPar(tStack *s, char *postExpr, unsigned *postLen)
 {
+    if (s == NULL || postExpr == NULL || postLen == NULL)
+        return;
+
     char c;
     stackTop(s, &c);
     if (stackEmpty(s) != 0)
         return;
+
     while (stackEmpty(s) == 0 && c != '(')
     {
         postExpr[*postLen] = c;
@@ -60,6 +64,7 @@ void untilLeftPar(tStack *s, char *postExpr, unsigned *postLen)
         stackPop(s);
         stackTop(s, &c);
     }
+
     if (stackEmpty(s) == 0)
         stackPop(s);
 }
@@ -76,6 +81,9 @@ void untilLeftPar(tStack *s, char *postExpr, unsigned *postLen)
 */
 void doOperation(tStack *s, char c, char *postExpr, unsigned *postLen)
 {
+    if (s == NULL || postExpr == NULL || postLen == NULL)
+        return;
+
     char stackTopChar = '\0';
     switch (c)
     {
@@ -207,6 +215,9 @@ void doOperation(tStack *s, char c, char *postExpr, unsigned *postLen)
 */
 char *infix2postfix(const char *infExpr)
 {
+    if (infExpr == NULL)
+        return NULL;
+
     tStack stack;
     stackInit(&stack);
     unsigned postPos = 0;
