@@ -51,12 +51,6 @@ int test_DLInitList()
 	}
 }
 
-int test_DLInitList_invalid()
-{
-	DLInitList(NULL);
-	return (TRUE);
-}
-
 int test_DLDisposeList()
 {
 	solved = TRUE;
@@ -522,7 +516,7 @@ int main(int argc, char *argv[])
 	printf("\n[TEST20]\n");
 	printf("Inicializace neplatného senamu.\n");
 	printf("~~~~~~~~~~~~~~~~~~~~~~~\n");
-	test_DLInitList_invalid();
+	DLInitList(NULL);
 
 	return (0);
 }
