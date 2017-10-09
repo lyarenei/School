@@ -94,21 +94,25 @@ void DLDisposeList(tDLList *L)
 **/
     if (L == NULL)
         return;
-
-    // Uložení ukazatele k posunu po seznamu
-    struct tDLElem *tmp = L->First->rptr;
-    while (tmp != NULL)
+    else if (L->First == NULL)
+        return;
+    else
     {
-        if (tmp->lptr != NULL) // Ošetření proti uvolnění prvního prvku
-            free(tmp->lptr);
-        tmp->lptr = NULL;
-        tmp = tmp->rptr;
-    }
-    // Uvolnění posledního prvku, který je prvním prvkem v listu
-    free(L->First);
+        // Uložení ukazatele k posunu po seznamu
+        struct tDLElem *tmp = L->First->rptr;
+        while (tmp != NULL)
+        {
+            if (tmp->lptr != NULL) // Ošetření proti uvolnění prvního prvku
+                free(tmp->lptr);
+            tmp->lptr = NULL;
+            tmp = tmp->rptr;
+        }
+        // Uvolnění posledního prvku, který je prvním prvkem v listu
+        free(L->First);
 
-    // Inicializace vymazaného listu
-    DLInitList(L);
+        // Inicializace vymazaného listu
+        DLInitList(L);
+    }
 }
 
 void DLInsertFirst(tDLList *L, int val)
@@ -244,18 +248,18 @@ void DLDeleteFirst(tDLList *L)
 **/
     if (L == NULL) // Ošetření ukazatele
         return;
-
-    if (L->First == NULL) // Ošetření prázdnosti
+    else if (L->First == NULL || L->Last == NULL) // Ošetření prázdnosti
         return;
-
-    if (L->Act == L->Last) // Zrušení aktivity
+    else if (L->Act == L->Last) // Zrušení aktivity
         L->Act = NULL;
+    else
+    {
+        struct tDLElem *tmp = L->First->rptr; // Uložení nového posledního prvku
+        tmp->lptr = NULL;                     // První prvek nemá předka
 
-    struct tDLElem *tmp = L->First->rptr; // Uložení nového posledního prvku
-    tmp->lptr = NULL;                     // První prvek nemá předka
-
-    free(L->First);
-    L->First = tmp; // Zápis nového prvního prvku listu
+        free(L->First);
+        L->First = tmp; // Zápis nového prvního prvku listu
+    }
 }
 
 void DLDeleteLast(tDLList *L)
@@ -266,18 +270,18 @@ void DLDeleteLast(tDLList *L)
 **/
     if (L == NULL) // Ošetření ukazatele
         return;
-
-    if (L->Last == NULL) // Ošetření prázdnosti
+    else if (L->First == NULL || L->Last == NULL) // Ošetření prázdnosti
         return;
-
-    if (L->Act == L->Last) // Zrušení aktivity
+    else if (L->Act == L->Last) // Zrušení aktivity
         L->Act = NULL;
+    else
+    {
+        struct tDLElem *tmp = L->Last->lptr; // Uložení nového posledního prvku
+        tmp->rptr = NULL;                    // Poslední prvek nemá následníka
 
-    struct tDLElem *tmp = L->Last->lptr; // Uložení nového posledního prvku
-    tmp->rptr = NULL;                    // Poslední prvek nemá následníka
-
-    free(L->Last);
-    L->Last = tmp; // Zápis nového posledního prvku listu
+        free(L->Last);
+        L->Last = tmp; // Zápis nového posledního prvku listu
+    }
 }
 
 void DLPostDelete(tDLList *L)
@@ -289,19 +293,20 @@ void DLPostDelete(tDLList *L)
 **/
     if (L == NULL) // Ošetření ukazatele
         return;
-
-    if (DLActive(L) == 0 || L->Act == L->Last) // Ošetření aktivity a kontrola aktivního prvku
+    else if (DLActive(L) == 0 || L->Act == L->Last) // Ošetření aktivity a kontrola aktivního prvku
         return;
-
-    struct tDLElem *tmp = L->Act->rptr->rptr; // Uložení nového následníka Act
-    free(L->Act->rptr);                       // Uvolnení následníka Act
-    L->Act->rptr = NULL;
-
-    // Pokud následník uvolněného následníka Act neexistoval...
-    if (tmp != NULL)
-        L->Act->rptr = tmp;
     else
-        L->Last = L->Act; //.. zapíšeme jej také do listu jako poslední prvek
+    {
+        struct tDLElem *tmp = L->Act->rptr->rptr; // Uložení nového následníka Act
+        free(L->Act->rptr);                       // Uvolnení následníka Act
+        L->Act->rptr = NULL;
+
+        // Pokud následník uvolněného následníka Act neexistoval...
+        if (tmp != NULL)
+            L->Act->rptr = tmp;
+        else
+            L->Last = L->Act; //.. zapíšeme jej také do listu jako poslední prvek
+    }
 }
 
 void DLPreDelete(tDLList *L)
@@ -313,22 +318,22 @@ void DLPreDelete(tDLList *L)
 **/
     if (L == NULL) // Ošetření ukazatele
         return;
-
-    if (DLActive(L) == 0 || L->Act == L->First) // Ošetření aktivity a kontrola aktivního prvku
+    else if (DLActive(L) == 0 || L->Act == L->First) // Ošetření aktivity a kontrola aktivního prvku
         return;
-
-    if (L->Act->lptr == NULL)
+    else if (L->Act->lptr == NULL)
         return;
-
-    struct tDLElem *tmp = L->Act->lptr->lptr; // Uložení nového předka Act
-    free(L->Act->lptr);                       // Uvolnení předka Act
-    L->Act->lptr = NULL;
-
-    // Pokud předek uvolněného předka Act neexistoval...
-    if (tmp != NULL)
-        L->Act->lptr = tmp;
     else
-        L->First = L->Act; //.. zapíšeme jej také do listu jako první prvek
+    {
+        struct tDLElem *tmp = L->Act->lptr->lptr; // Uložení nového předka Act
+        free(L->Act->lptr);                       // Uvolnení předka Act
+        L->Act->lptr = NULL;
+
+        // Pokud předek uvolněného předka Act neexistoval...
+        if (tmp != NULL)
+            L->Act->lptr = tmp;
+        else
+            L->First = L->Act; //.. zapíšeme jej také do listu jako první prvek
+    }
 }
 
 void DLPostInsert(tDLList *L, int val)
@@ -341,23 +346,24 @@ void DLPostInsert(tDLList *L, int val)
 **/
     if (L == NULL) // Ošetření ukazatele
         return;
-
-    if (DLActive(L) == 0) // Ošetření aktivity
+    else if (DLActive(L) == 0) // Ošetření aktivity
         return;
-
-    struct tDLElem *tmp = malloc(sizeof(struct tDLElem));
-    if (tmp == NULL)
+    else
     {
-        DLError();
-        return;
+        struct tDLElem *tmp = malloc(sizeof(struct tDLElem));
+        if (tmp == NULL)
+        {
+            DLError();
+            return;
+        }
+        tmp->data = val;
+
+        tmp->lptr = L->Act;       // Zápis předka
+        tmp->rptr = L->Act->rptr; // Zápis následníka
+
+        L->Act->rptr->lptr = tmp; // Zápis nového předka do původního následníka Act
+        L->Act->rptr = tmp;       // Zápis nového následníka do Act
     }
-    tmp->data = val;
-
-    tmp->lptr = L->Act;       // Zápis předka
-    tmp->rptr = L->Act->rptr; // Zápis následníka
-
-    L->Act->rptr->lptr = tmp; // Zápis nového předka do původního následníka Act
-    L->Act->rptr = tmp;       // Zápis nového následníka do Act
 }
 
 void DLPreInsert(tDLList *L, int val)
@@ -370,23 +376,24 @@ void DLPreInsert(tDLList *L, int val)
 **/
     if (L == NULL) // Ošetření ukazatele
         return;
-
-    if (DLActive(L) == 0) // Ošetření aktivity
+    else if (DLActive(L) == 0) // Ošetření aktivity
         return;
-
-    struct tDLElem *tmp = malloc(sizeof(struct tDLElem));
-    if (tmp == NULL)
+    else
     {
-        DLError();
-        return;
+        struct tDLElem *tmp = malloc(sizeof(struct tDLElem));
+        if (tmp == NULL)
+        {
+            DLError();
+            return;
+        }
+        tmp->data = val;
+
+        tmp->rptr = L->Act;       // Zápis předka
+        tmp->lptr = L->Act->lptr; // Zápis následníka
+
+        L->Act->lptr->rptr = tmp; // Zápis nového předka do původního následníka Act
+        L->Act->lptr = tmp;       // Zápis nového následníka do Act
     }
-    tmp->data = val;
-
-    tmp->rptr = L->Act;       // Zápis předka
-    tmp->lptr = L->Act->lptr; // Zápis následníka
-
-    L->Act->lptr->rptr = tmp; // Zápis nového předka do původního následníka Act
-    L->Act->lptr = tmp;       // Zápis nového následníka do Act
 }
 
 void DLCopy(tDLList *L, int *val)
@@ -397,13 +404,13 @@ void DLCopy(tDLList *L, int *val)
 **/
     if (L == NULL) // Ošetření ukazatele
         return;
-
-    if (DLActive(L) == 0) // Ošetření aktivity
+    else if (DLActive(L) == 0) // Ošetření aktivity
     {
         DLError();
         return;
     }
-    *val = L->Act->data;
+    else
+        *val = L->Act->data;
 }
 
 void DLActualize(tDLList *L, int val)
@@ -414,11 +421,10 @@ void DLActualize(tDLList *L, int val)
 **/
     if (L == NULL) // Ošetření ukazatele
         return;
-
-    if (DLActive(L) == 0) // Ošetření aktivity
+    else if (DLActive(L) == 0) // Ošetření aktivity
         return;
-
-    L->Act->data = val;
+    else
+        L->Act->data = val;
 }
 
 void DLSucc(tDLList *L)
@@ -430,11 +436,9 @@ void DLSucc(tDLList *L)
 **/
     if (L == NULL) // Ošetření ukazatele
         return;
-
-    if (DLActive(L) == 0) // Ošetření aktivity
+    else if (DLActive(L) == 0) // Ošetření aktivity
         return;
-
-    if (L->Act == L->Last)
+    else if (L->Act == L->Last)
         L->Act = NULL;
     else
         L->Act = L->Act->rptr;
@@ -449,11 +453,9 @@ void DLPred(tDLList *L)
 **/
     if (L == NULL) // Ošetření ukazatele
         return;
-
-    if (DLActive(L) == 0) // Ošetření aktivity
+    else if (DLActive(L) == 0) // Ošetření aktivity
         return;
-
-    if (L->Act == L->First)
+    else if (L->Act == L->First)
         L->Act = NULL;
     else
         L->Act = L->Act->lptr;
