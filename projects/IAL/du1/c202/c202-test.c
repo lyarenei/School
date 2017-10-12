@@ -166,28 +166,172 @@ int main(int argc, char *argv[])
 	use_stack_full(ptrstack);
 
 	printf("\n\n----- C202 - The End of Basic Tests -----\n");
+	free(ptrstack);
 
-	printf("\n[TEST10] Pop empty stack\n");
+	printf("C202 - Stack Implemented Using an Array - Advanced Fituska Tests\n");
+	printf("--------------------------------------------------------\n");
+
+	STACK_SIZE = 1;
+	ptrstack = (tStack *)malloc(sizeof(tStack));
+	stackInit(ptrstack);
+
+	printf("\n[TEST01] Initialization with NULL pointer should cause an error but not a crash.\n");
+	printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	use_stack_init(NULL);
+
+	printf("\n[TEST02] We check a stack of size 1.\n");
+	printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	use_stack_init(ptrstack);
+	stackPrint(ptrstack);
+	use_stack_empty(ptrstack);
+	use_stack_full(ptrstack);
+
+	printf("\n[TEST03] Pop should do nothing here ...\n");
+	printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	use_stack_pop(ptrstack);
+	stackPrint(ptrstack);
+	use_stack_empty(ptrstack);
+	use_stack_full(ptrstack);
+
+	printf("\n[TEST04] ... while Top should cause an error.\n");
+	printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	use_stack_top(ptrstack);
+	stackPrint(ptrstack);
+	use_stack_empty(ptrstack);
+	use_stack_full(ptrstack);
+
+	printf("\n[TEST05] We push 'O' as the first item.\n");
+	printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	use_stack_push(ptrstack, 'O');
+	stackPrint(ptrstack);
+	use_stack_empty(ptrstack);
+	use_stack_full(ptrstack);
+
+	printf("\n[TEST06] We try to push another item. It should cause an error.\n");
+	printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	use_stack_push(ptrstack, 'K');
+	stackPrint(ptrstack);
+	use_stack_empty(ptrstack);
+	use_stack_full(ptrstack);
+
+	printf("\n[TEST07] And once again.\n");
+	printf("~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	use_stack_push(ptrstack, '!');
+	stackPrint(ptrstack);
+	use_stack_empty(ptrstack);
+	use_stack_full(ptrstack);
+
+	printf("\n[TEST08] What is on the top now?\n");
+	printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	use_stack_top(ptrstack);
+
+	printf("\n[TEST09] We remove it ...\n");
+	printf("~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	use_stack_pop(ptrstack);
+	stackPrint(ptrstack);
+	use_stack_empty(ptrstack);
+	use_stack_full(ptrstack);
+
+	printf("\n[TEST10] ... and check behaviour of Pop and Top.\n");
+	printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	use_stack_pop(ptrstack);
+	use_stack_top(ptrstack);
+	stackPrint(ptrstack);
+	use_stack_empty(ptrstack);
+	use_stack_full(ptrstack);
+
+	STACK_SIZE = MAX_STACK;
+	stackInit(ptrstack);
+
+	printf("\n[TEST11] Now, we check a stack of maximum size.\n");
+	printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	use_stack_init(ptrstack);
+	stackPrint(ptrstack);
+	use_stack_empty(ptrstack);
+	use_stack_full(ptrstack);
+
+	printf("\n[TEST12] Pop should do nothing here ...\n");
+	printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	use_stack_pop(ptrstack);
+	stackPrint(ptrstack);
+	use_stack_empty(ptrstack);
+	use_stack_full(ptrstack);
+
+	printf("\n[TEST13] ... while Top should cause an error.\n");
+	printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	use_stack_top(ptrstack);
+	stackPrint(ptrstack);
+	use_stack_empty(ptrstack);
+	use_stack_full(ptrstack);
+
+	printf("\n[TEST14] Pushing small letters (but we have no enough space for that).\n");
+	printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	for (int i = 0; i < 26; i++)
+		use_stack_push(ptrstack, 'a' + i);
+	stackPrint(ptrstack);
+	use_stack_empty(ptrstack);
+	use_stack_full(ptrstack);
+
+	printf("\n[TEST15] What is on the top now?\n");
+	printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	stackPrint(ptrstack);
+	use_stack_top(ptrstack);
+
+	printf("\n[TEST16] Pushing another item should cause another error.\n");
+	printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	use_stack_push(ptrstack, 'X');
+	use_stack_empty(ptrstack);
+	use_stack_full(ptrstack);
+
+	printf("\n[TEST17] The top item should be the same.\n");
+	printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	stackPrint(ptrstack);
+	use_stack_top(ptrstack);
+
+	printf("\n[TEST18] We remove all items without proper counting ...\n");
+	printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	for (int i = 0; i < 2 * MAX_STACK; i++)
+		use_stack_pop(ptrstack);
+	stackPrint(ptrstack);
+	use_stack_empty(ptrstack);
+	use_stack_full(ptrstack);
+
+	printf("\n[TEST19] ... and check behaviour of Pop and Top.\n");
+	printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	use_stack_pop(ptrstack);
+	use_stack_pop(ptrstack);
+	use_stack_top(ptrstack);
+	use_stack_top(ptrstack);
+	stackPrint(ptrstack);
+	use_stack_empty(ptrstack);
+	use_stack_full(ptrstack);
+
+	printf("\n\n----- C202 - The End of Advanced Fituska Tests -----\n");
+
+	printf("C202 - Stack Implemented Using an Array - Useless Tests\n");
+	printf("-----------------------------------------------------\n");
+
+	printf("\n[TEST01] Pop empty stack\n");
 	printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
 	use_stack_pop(ptrstack);
 	stackPrint(ptrstack);
 
-	printf("\n[TEST10] Read empty stack\n");
+	printf("\n[TEST02] Read empty stack\n");
 	printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
 	use_stack_top(ptrstack);
 	stackPrint(ptrstack);
 
-	printf("\n[TEST11] Init invalid stack\n");
+	printf("\n[TEST03] Init invalid stack\n");
 	printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
 	use_stack_init(NULL);
 	stackPrint(ptrstack);
 
-	printf("\n[TEST12] Pop invalid stack\n");
+	printf("\n[TEST04] Pop invalid stack\n");
 	printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
 	use_stack_pop(NULL);
 	stackPrint(ptrstack);
 
-	printf("\n[TEST13] Push to invalid stack\n");
+	printf("\n[TEST05] Push to invalid stack\n");
 	printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
 	use_stack_push(NULL, 'x');
 	stackPrint(ptrstack);
