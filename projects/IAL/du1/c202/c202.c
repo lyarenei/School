@@ -80,7 +80,7 @@ int stackEmpty(const tStack *s)
 ** typu "if ( true ) b=true else b=false".
 */
 
-	return s->top == -1 ? s->top : 0;
+	return (s == NULL) ? -1 : (s->top > 0) ? 0 : s->top;
 }
 
 int stackFull(const tStack *s)
@@ -94,7 +94,7 @@ int stackFull(const tStack *s)
 ** Funkci implementujte jako jediný příkaz.
 */
 
-	return s->top == STACK_SIZE - 1 ? s->top : 0;
+	return (s == NULL) ? 0 : (s->top == STACK_SIZE - 1) ? 1 : 0;
 }
 
 void stackTop(const tStack *s, char *c)
