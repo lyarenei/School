@@ -42,8 +42,9 @@
 #include "c401.h"
 int solved;
 
-void BSTInit (tBSTNodePtr *RootPtr) {
-/*   -------
+void BSTInit(tBSTNodePtr *RootPtr)
+{
+	/*   -------
 ** Funkce provede počáteční inicializaci stromu před jeho prvním použitím.
 **
 ** Ověřit, zda byl již strom předaný přes RootPtr inicializován, nelze,
@@ -57,15 +58,14 @@ void BSTInit (tBSTNodePtr *RootPtr) {
 ** Proto je třeba při přiřazení přes RootPtr použít dereferenční operátor *.
 ** Ten bude použit i ve funkcích BSTDelete, BSTInsert a BSTDispose.
 **/
-	
-	
-	
-	 solved = FALSE;		  /* V případě řešení smažte tento řádek! */	
-	
-}	
+	if (RootPtr == NULL)
+		return;
+	*RootPtr = NULL;
+}
 
-int BSTSearch (tBSTNodePtr RootPtr, char K, int *Content)	{
-/*  ---------
+int BSTSearch(tBSTNodePtr RootPtr, char K, int *Content)
+{
+	/*  ---------
 ** Funkce vyhledá uzel v BVS s klíčem K.
 **
 ** Pokud je takový nalezen, vrací funkce hodnotu TRUE a v proměnné Content se
@@ -78,16 +78,28 @@ int BSTSearch (tBSTNodePtr RootPtr, char K, int *Content)	{
 ** problém řešte rekurzivním volání této funkce, přičemž nedeklarujte žádnou
 ** pomocnou funkci.
 **/
-							   
-	
 
-	 solved = FALSE;		  /* V případě řešení smažte tento řádek! */	
-	
-} 
+	if (RootPtr == NULL)
+		return FALSE;
+	else if (K < RootPtr->Key)
+		return BSTSearch(RootPtr->LPtr, K, Content);
+	else if (K > RootPtr->Key)
+		return BSTSearch(RootPtr->RPtr, K, Content);
+	else
+	{
+		if (RootPtr->Key == K)
+		{
+			*Content = RootPtr->BSTNodeCont;
+			return TRUE;
+		}
+		else
+			return FALSE;
+	}
+}
 
-
-void BSTInsert (tBSTNodePtr* RootPtr, char K, int Content)	{	
-/*   ---------
+void BSTInsert(tBSTNodePtr *RootPtr, char K, int Content)
+{
+	/*   ---------
 ** Vloží do stromu RootPtr hodnotu Content s klíčem K.
 **
 ** Pokud již uzel se zadaným klíčem ve stromu existuje, bude obsah uzlu
@@ -102,15 +114,28 @@ void BSTInsert (tBSTNodePtr* RootPtr, char K, int Content)	{
 ** rychlosti, tak z hlediska paměťových nároků. Zde jde ale o školní
 ** příklad, na kterém si chceme ukázat eleganci rekurzivního zápisu.
 **/
-		
-	
-	
-	 solved = FALSE;		  /* V případě řešení smažte tento řádek! */	
-	
+
+	if ((*RootPtr) == NULL)
+	{
+		*RootPtr = malloc(sizeof(struct tBSTNode));
+		if (RootPtr == NULL)
+			return;
+		(*RootPtr)->Key = K;
+		(*RootPtr)->BSTNodeCont = Content;
+		(*RootPtr)->LPtr = NULL;
+		(*RootPtr)->RPtr = NULL;
+	}
+	else if (K < (*RootPtr)->Key)
+		BSTInsert(&(*RootPtr)->LPtr, K, Content);
+	else if (K > (*RootPtr)->Key)
+		BSTInsert(&(*RootPtr)->RPtr, K, Content);
+	else
+		(*RootPtr)->BSTNodeCont = Content;
 }
 
-void ReplaceByRightmost (tBSTNodePtr PtrReplaced, tBSTNodePtr *RootPtr) {
-/*   ------------------
+void ReplaceByRightmost(tBSTNodePtr PtrReplaced, tBSTNodePtr *RootPtr)
+{
+	/*   ------------------
 ** Pomocná funkce pro vyhledání, přesun a uvolnění nejpravějšího uzlu.
 **
 ** Ukazatel PtrReplaced ukazuje na uzel, do kterého bude přesunuta hodnota
@@ -121,15 +146,33 @@ void ReplaceByRightmost (tBSTNodePtr PtrReplaced, tBSTNodePtr *RootPtr) {
 ** Tato pomocná funkce bude použita dále. Než ji začnete implementovat,
 ** přečtěte si komentář k funkci BSTDelete(). 
 **/
-	
-	
-		
-	 solved = FALSE;		  /* V případě řešení smažte tento řádek! */	
-	
+
+	if (RootPtr == NULL)
+		return;
+	if (*RootPtr == NULL)
+		return;
+	else if ((*RootPtr)->RPtr != NULL)
+	{
+		if ((*RootPtr)->Key < (*RootPtr)->RPtr->Key)
+			ReplaceByRightmost(PtrReplaced, &(*RootPtr)->RPtr);
+		else
+		{
+			PtrReplaced->Key = (*RootPtr)->Key;
+			PtrReplaced->BSTNodeCont = (*RootPtr)->BSTNodeCont;
+			BSTDelete(&PtrReplaced->LPtr, (*RootPtr)->Key);
+		}
+	}
+	else
+	{
+		PtrReplaced->Key = (*RootPtr)->Key;
+		PtrReplaced->BSTNodeCont = (*RootPtr)->BSTNodeCont;
+		BSTDelete(&PtrReplaced->LPtr, (*RootPtr)->Key);
+	}
 }
 
-void BSTDelete (tBSTNodePtr *RootPtr, char K) 		{
-/*   ---------
+void BSTDelete(tBSTNodePtr *RootPtr, char K)
+{
+	/*   ---------
 ** Zruší uzel stromu, který obsahuje klíč K.
 **
 ** Pokud uzel se zadaným klíčem neexistuje, nedělá funkce nic. 
@@ -140,26 +183,63 @@ void BSTDelete (tBSTNodePtr *RootPtr, char K) 		{
 ** Tuto funkci implementujte rekurzivně s využitím dříve deklarované
 ** pomocné funkce ReplaceByRightmost.
 **/
-	
-	
-	
-	 solved = FALSE;		  /* V případě řešení smažte tento řádek! */	
 
-} 
+	if (RootPtr == NULL)
+		return;
+	else if ((*RootPtr) == NULL)
+		return;
+	else if (K < (*RootPtr)->Key)
+		BSTDelete(&(*RootPtr)->LPtr, K);
+	else if (K > (*RootPtr)->Key)
+		BSTDelete(&(*RootPtr)->RPtr, K);
+	else
+	{
+		// If deleted node has no / one child
+		if ((*RootPtr)->LPtr == NULL)
+		{
+			struct tBSTNode *backup = (*RootPtr)->RPtr;
+			free(*RootPtr);
+			*RootPtr = backup;
+		}
+		else if ((*RootPtr)->RPtr == NULL)
+		{
+			struct tBSTNode *backup = (*RootPtr)->LPtr;
+			free(*RootPtr);
+			*RootPtr = backup;
+		}
+		else
+		{
+			// Deleted node has two childs
+			ReplaceByRightmost((*RootPtr), &(*RootPtr)->LPtr);
+		}
+	}
+}
 
-void BSTDispose (tBSTNodePtr *RootPtr) {	
-/*   ----------
+void BSTDispose(tBSTNodePtr *RootPtr)
+{
+	/*   ----------
 ** Zruší celý binární vyhledávací strom a korektně uvolní paměť.
 **
 ** Po zrušení se bude BVS nacházet ve stejném stavu, jako se nacházel po
 ** inicializaci. Tuto funkci implementujte rekurzivně bez deklarování pomocné
 ** funkce.
 **/
-	
-
-	 solved = FALSE;		  /* V případě řešení smažte tento řádek! */	
-
+	if (RootPtr == NULL)
+		return;
+	if (*RootPtr == NULL)
+		return;
+	if ((*RootPtr)->LPtr != NULL)
+	{
+		BSTDispose(&(*RootPtr)->LPtr);
+		(*RootPtr)->LPtr = NULL;
+	}
+	if ((*RootPtr)->RPtr != NULL)
+	{
+		BSTDispose(&(*RootPtr)->RPtr);
+		(*RootPtr)->RPtr = NULL;
+	}
+	free((*RootPtr));
+	*RootPtr = NULL;
 }
 
 /* konec c401.c */
-
