@@ -20,11 +20,13 @@ inputFile = wave.open(sys.argv[1], "rb")
 # Fetch input file parameters
 inputParams = inputFile.getparams()
 
+
 # [Task 1] Write down sampling frequency, length in samples and time:
 print("Task 1:")
-print("\tSampling frequency: ", inputParams.framerate, "Hz")
-print("\tNumber of samples: ", inputParams.nframes)
+print("\tSampling frequency:", inputParams.framerate, "Hz")
+print("\tNumber of samples:", inputParams.nframes)
 print("\tTime: ", inputParams.framerate / inputParams.nframes, "s")
+
 
 # [Task 2] Evaluate signal spectrum with DFT, plot spectrum module up to F_s / 2 frequency:
 
