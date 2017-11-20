@@ -12,5 +12,14 @@ inputFile = wave.open(sys.argv[1], "rb")
 
 # TODO: check for errors
 
+# Fetch input file parameters
+inputParams = inputFile.getparams()
+
+# [Task 1] Write down sampling frequency, length in samples and time:
+print("Task 1:")
+print("\tSampling frequency: ", inputParams.framerate, "Hz")
+print("\tNumber of samples: ", inputParams.nframes)
+print("\tTime: ", inputParams.framerate / inputParams.nframes, "s")
+
 # Finally, close file
 inputFile.close()
