@@ -6,7 +6,7 @@
 import sys
 import wave
 import matplotlib.pyplot as gplot
-from numpy import linspace
+from numpy import linspace, argmax
 from scipy import fftpack
 from scipy.io import wavfile
 
@@ -41,10 +41,15 @@ x_input = linspace(0.0, samples*length, samples)
 dft_coefficients = fftpack.fft(inputData) / samples
 
 # Plot frequency spectrum
-print("Task 2: Plotting frequency spectrum...")
+print("Task 2: \n\tPlotting frequency spectrum...")
 # TODO: Add labels to graph
 gplot.plot(x_input[range(0, int(samples / 2))], abs(dft_coefficients)[range(0, int(samples / 2))])
 gplot.show()
+
+
+# [Task 3] Evaluate on which frequency is the maximum module value
+print("Task 3: \n\tModule maximum is on:", argmax(dft_coefficients), "Hz")
+
 
 # Finally, close file
 inputFile.close()
