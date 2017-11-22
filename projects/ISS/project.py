@@ -76,5 +76,10 @@ gplot.plot(x_input[range(0, int(samples / 2))],
 gplot.show()
 
 
+# [Task 7] Evaluate on which frequency is the maximum module value in filtered signal
+print("Task 7: \n\tModule maximum in filtered signal is on:",
+      argmax(filtered_spectrum), "Hz")
+
+
 # Finally, close file
 inputFile.close()
