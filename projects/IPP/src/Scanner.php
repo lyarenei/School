@@ -2,6 +2,8 @@
 
     require_once('Logger.php');
 
+    define("FILE_ERROR_CODE", 11);
+
     class Scanner {
         private $sourceFile;
 
@@ -26,7 +28,7 @@
                 $this->sourceFile = fopen($fileName, "r");
             } 
             else {
-                $this->logger->PrintError("Cannot open file: The specified file does not exist.", 1);
+                $this->logger->PrintError("Cannot open file: The specified file does not exist.", FILE_ERROR_CODE);
             }
         }
 
