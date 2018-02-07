@@ -25,6 +25,10 @@ class Program {
         array_push($this->__instructions, $instruction);
         $counter++;
     }
+
+    public function getInstructions() {
+        return $this->__instructions;
+    }
 }
 
 ?>
