@@ -14,7 +14,7 @@ class FileAnalyzer {
     public function analyzeFile($fileName) {
         $this->__scanner->openFile($fileName);
         $program = new Program();
-        $program->setProgramLanguage($this->__scanner->getLine()); // TODO: remove leading dot, spaces, etc, no match == error?
+        $program->setLanguage($this->__scanner->getLine()); // TODO: remove leading dot, spaces, etc, no match == error?
 
         while (($line = $this->__scanner->getLine()) != '') {
             $program->insertInstruction($line);

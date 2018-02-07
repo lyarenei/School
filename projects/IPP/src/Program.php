@@ -7,11 +7,11 @@ class Program {
     private $__language;
     private $__instructions = array();
 
-    public function setProgramLanguage($language) {
+    public function setLanguage($language) {
         $this->__language = $language;
     }
 
-    public function getProgramLanguage() {
+    public function getLanguage() {
         return $this->__language;
     }
 
