@@ -11,6 +11,10 @@ class Program {
         $this->__language = $language;
     }
 
+    public function getProgramLanguage() {
+        return $this->__language;
+    }
+
     public function insertInstruction($instructionLine) {
         static $counter = 1;
         $instruction = new Instruction();
