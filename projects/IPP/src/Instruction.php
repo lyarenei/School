@@ -16,6 +16,14 @@
         public function SetOpcode($opcode) {
             $this->opcode = $opcode;
         }
+
+        public function SetInstructionArguments($instructionLineArray) {
+            $checker = new Checker();
+            $checker->LexicalCheck($instructionLineArray[0]);
+            $checker->SyntaxCheck($instructionLineArray);
+            array_shift($instructionLineArray);
+            $this->arguments = $instructionLineArray;
+        }
     }
 
 ?>
