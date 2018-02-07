@@ -1,29 +1,29 @@
 <?php
 
-    require_once('Checker.php');
+require_once 'Checker.php';
 
-    class Instruction {
+class Instruction {
 
-        private $order;
-        private $opcode;
+    private $__order;
+    private $__opcode;
 
-        private $arguments = array();
+    private $__arguments = array();
 
-        public function SetOrder($order) {
-            $this->order = $order;
-        }
-
-        public function SetOpcode($opcode) {
-            $this->opcode = $opcode;
-        }
-
-        public function SetInstructionArguments($instructionLineArray) {
-            $checker = new Checker();
-            $checker->LexicalCheck($instructionLineArray[0]);
-            $checker->SyntaxCheck($instructionLineArray);
-            array_shift($instructionLineArray);
-            $this->arguments = $instructionLineArray;
-        }
+    public function setOrder($order) {
+        $this->__order = $order;
     }
+
+    public function setOpcode($opcode) {
+        $this->__opcode = $opcode;
+    }
+
+    public function setInstructionArguments($instructionLineArray) {
+        $checker = new Checker();
+        $checker->lexicalCheck($instructionLineArray[0]);
+        $checker->syntaxCheck($instructionLineArray);
+        array_shift($instructionLineArray);
+        $this->__arguments = $instructionLineArray;
+    }
+}
 
 ?>

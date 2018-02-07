@@ -1,28 +1,27 @@
 <?php
 
-    require_once('Scanner.php');
-    require_once('Program.php');
+require_once 'Scanner.php';
+require_once 'Program.php';
 
-    class FileAnalyzer {
+class FileAnalyzer {
 
-        private $scanner;
+    private $__scanner;
 
-        function __construct()
-        {
-            $this->scanner = new Scanner();
-        }
-
-        public function AnalyzeFile($fileName) {
-            $this->scanner->OpenFile($fileName);
-            $program = new Program();
-            $program->SetProgramLanguage($this->scanner->GetLine()); // remove leading dot, spaces, etc, no match == error?
-
-            while (($line = $this->scanner->GetLine()) != '') {
-                $program->InsertInstruction($line);
-            }
-
-            return $program;
-        }
+    public function __construct() {
+        $this->__scanner = new Scanner();
     }
+
+    public function analyzeFile($fileName) {
+        $this->__scanner->openFile($fileName);
+        $program = new Program();
+        $program->setProgramLanguage($this->__scanner->getLine()); // TODO: remove leading dot, spaces, etc, no match == error?
+
+        while (($line = $this->__scanner->getLine()) != '') {
+            $program->insertInstruction($line);
+        }
+
+        return $program;
+    }
+}
 
 ?>

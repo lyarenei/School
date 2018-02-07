@@ -1,26 +1,26 @@
 <?php
 
-    require_once('Instruction.php');
+require_once 'Instruction.php';
 
-    class Program {
+class Program {
 
-        private $language;
-        private $instructions = array();
+    private $__language;
+    private $__instructions = array();
 
-        public function SetProgramLanguage($language) {
-            $this->language = $language;
-        }
-
-        public function InsertInstruction($instructionLine) {
-            static $counter = 1;
-            $instruction = new Instruction();
-            $instructionParams = preg_split('/\s+/', $instructionLine);
-            $instruction->SetOrder($counter);
-            $instruction->SetOpcode($instructionParams[0]);
-            $instruction->SetInstructionArguments($instructionParams);
-            array_push($this->instructions, $instruction);
-            $counter++;
-        }
+    public function setProgramLanguage($language) {
+        $this->__language = $language;
     }
+
+    public function insertInstruction($instructionLine) {
+        static $counter = 1;
+        $instruction = new Instruction();
+        $instructionParams = preg_split('/\s+/', $instructionLine);
+        $instruction->setOrder($counter);
+        $instruction->setOpcode($instructionParams[0]);
+        $instruction->setInstructionArguments($instructionParams);
+        array_push($this->__instructions, $instruction);
+        $counter++;
+    }
+}
 
 ?>
