@@ -9,8 +9,18 @@ class Writer {
         $this->__xmlWriter = new XMLWriter();
     }
 
-    private function __WriteProgram($parsedProgram) {
+    private function __WriteInstruction($parsedInstruction) {
 
+    }
+
+    private function __WriteProgram($parsedProgram) {
+        $this->__xmlWriter->startElement('IPPcode18');
+        //TODO: fix parsing language, so I can use this
+        //$this->__xmlWriter->startElement($parsedProgram->getLanguage());
+        foreach ($parsedProgram->getInstructions() as $instruction) {
+            $this->__WriteInstruction($instruction);
+        }
+        $this->__xmlWriter->endElement();
     }
 
     public function Write($parsedProgram, $outputFile) {
