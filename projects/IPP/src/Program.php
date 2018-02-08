@@ -18,10 +18,10 @@ class Program {
     public function insertInstruction($instructionLine) {
         static $counter = 1;
         $instruction = new Instruction();
-        $instructionParams = preg_split('/\s+/', $instructionLine);
+        $instructionArgs = preg_split('/\s+/', $instructionLine);
         $instruction->setOrder($counter);
-        $instruction->setOpcode($instructionParams[0]);
-        $instruction->setArguments($instructionParams);
+        $instruction->setOpcode($instructionArgs[0]);
+        $instruction->setArguments($instructionArgs);
         array_push($this->__instructions, $instruction);
         $counter++;
     }
