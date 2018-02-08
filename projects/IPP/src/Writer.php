@@ -10,7 +10,7 @@ class Writer {
     }
 
     private function __writeArgument($argument) {
-        $this->__xmlWriter->startElement('argx');
+        $this->__xmlWriter->startElement('arg' . $argument->getOrder());
         $this->__xmlWriter->writeAttribute('type', $argument->getType());
 
         $this->__xmlWriter->startElement('value');
