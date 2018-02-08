@@ -12,9 +12,12 @@ class Writer {
     private function __writeArgument($argument) {
         $this->__xmlWriter->startElement('argx');
         $this->__xmlWriter->writeAttribute('type', $argument->getType());
+
         $this->__xmlWriter->startElement('value');
         $this->__xmlWriter->text($argument->getValue());
-        $this->__xmlWriter->endElement();
+        $this->__xmlWriter->endElement(); // end value
+
+        $this->__xmlWriter->endElement(); // end arg
     }
 
     private function __writeInstruction($parsedInstruction) {
