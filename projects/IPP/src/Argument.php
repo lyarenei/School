@@ -2,13 +2,22 @@
 
 class Argument {
     private $__type;
+    private $__value;
 
-    public function setArgumentType($type) {
+    public function setType($type) {
         $this->__type = $type;
     }
 
-    public function getArgumentType() {
+    public function getType() {
         return $this->__type;
+    }
+
+    public function setValue($value) {
+        $this->__value = $value;
+    }
+
+    public function getValue() {
+        return $this->__value;
     }
 }
 
