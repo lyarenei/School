@@ -1,13 +1,37 @@
 <?php
 
 require_once 'Checker.php';
+require_once 'Argument.php';
+require_once 'Logger.php';
 
 class Instruction {
 
     private $__order;
     private $__opcode;
-
     private $__arguments = array();
+
+    private $__logger;
+
+    public function __construct() {
+        $this->__logger = new Logger();
+    }
+
+    private function __parseArgument($argumentLine) {
+        $argument = new Argument();
+        switch ($this->__opcode) {
+        case 'LABEL':
+        case 'JUMP':
+            $argument->setType('label');
+            $argument->setValue($argumentLine);
+            break;
+
+        default:
+            $argument->setType('unknown');
+            $argument->setValue($argumentLine);
+        }
+
+        return $argument;
+    }
 
     public function setOrder($order) {
         $this->__order = $order;
@@ -30,7 +54,13 @@ class Instruction {
         $checker->lexicalCheck($instructionLineArray[0]);
         $checker->syntaxCheck($instructionLineArray);
         array_shift($instructionLineArray);
-        $this->__arguments = $instructionLineArray;
+
+        // Now we heave only arguments in $instructionLineArray
+        foreach ($instructionLineArray as $argumentLine) {
+            $argument = $this->__parseArgument($argumentLine);
+            array_push($this->__arguments, $argument);
+        }
+        //$this->__arguments = $instructionLineArray;
     }
 
     public function getArguments() {
