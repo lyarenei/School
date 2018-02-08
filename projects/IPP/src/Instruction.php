@@ -16,23 +16,6 @@ class Instruction {
         $this->__logger = new Logger();
     }
 
-    private function __parseArgument($argumentLine) {
-        $argument = new Argument();
-        switch ($this->__opcode) {
-        case 'LABEL':
-        case 'JUMP':
-            $argument->setType('label');
-            $argument->setValue($argumentLine);
-            break;
-
-        default:
-            $argument->setType('unknown');
-            $argument->setValue($argumentLine);
-        }
-
-        return $argument;
-    }
-
     public function setOrder($order) {
         $this->__order = $order;
     }
@@ -51,13 +34,15 @@ class Instruction {
 
     public function setArguments($instructionLineArray) {
         $checker = new Checker();
+        $argument = new Argument();
+
         $checker->lexicalCheck($instructionLineArray[0]);
         $checker->syntaxCheck($instructionLineArray);
         array_shift($instructionLineArray);
 
         // Now we heave only arguments in $instructionLineArray
         foreach ($instructionLineArray as $argumentLine) {
-            $argument = $this->__parseArgument($argumentLine);
+            $argument->parseArgument($argumentLine);
             array_push($this->__arguments, $argument);
         }
     }
