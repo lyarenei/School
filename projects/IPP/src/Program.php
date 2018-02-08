@@ -18,7 +18,7 @@ class Program {
     public function insertInstruction($instructionLine) {
         static $counter = 1;
         $instruction = new Instruction();
-        $instructionArgs = preg_split('/\s+/', $instructionLine);
+        $instructionArgs = preg_split('/\s/', $instructionLine);
         $instruction->setOrder($counter);
         $instruction->setOpcode($instructionArgs[0]);
         $instruction->setArguments($instructionArgs);
