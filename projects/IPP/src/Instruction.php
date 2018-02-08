@@ -36,7 +36,7 @@ class Instruction {
         $checker = new Checker();
         $order = 1;
 
-        $checker->lexicalCheck($instructionLineArray[0]);
+        $checker->lexicalCheck($instructionLineArray);
         $checker->syntaxCheck($instructionLineArray);
         array_shift($instructionLineArray);
 
