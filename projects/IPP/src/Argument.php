@@ -1,6 +1,7 @@
 <?php
 
 class Argument {
+    private $__order;
     private $__type;
     private $__value;
 
@@ -18,6 +19,14 @@ class Argument {
 
     public function getValue() {
         return $this->__value;
+    }
+
+    public function setOrder($order) {
+        $this->__order = $order;
+    }
+
+    public function getOrder() {
+        return $this->__order;
     }
 }
 
