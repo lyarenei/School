@@ -32,6 +32,10 @@ class Instruction {
         array_shift($instructionLineArray);
         $this->__arguments = $instructionLineArray;
     }
+
+    public function getArguments() {
+        return $this->__arguments;
+    }
 }
 
 ?>
