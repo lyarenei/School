@@ -9,8 +9,20 @@ class Writer {
         $this->__xmlWriter = new XMLWriter();
     }
 
-    private function __WriteInstruction($parsedInstruction) {
+    private function __writeArgument($argument) {
 
+    }
+
+    private function __WriteInstruction($parsedInstruction) {
+        $this->__xmlWriter->startElement($parsedInstruction->getOpcode());
+        $this->__xmlWriter->startElement($parsedInstruction->getOrder());
+
+        foreach ($parsedInstruction->getArguments() as $argument) {
+            $this->__writeArgument($argument);
+        }
+
+        $this->__xmlWriter->endElement();
+        $this->__xmlWriter->endElement();
     }
 
     private function __WriteProgram($parsedProgram) {
