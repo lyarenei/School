@@ -29,6 +29,7 @@ class Scanner {
 
         $line = preg_replace('/#.*/', '', $line);
         $line = trim($line, " \t\n\r\0\x0B");
+        $line = preg_replace('/\s\s+/', ' ', $line);
         if (empty($line)) {
             return $this->getLine();
         } else {
