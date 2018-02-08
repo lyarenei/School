@@ -34,7 +34,6 @@ class Instruction {
 
     public function setArguments($instructionLineArray) {
         $checker = new Checker();
-        $argument = new Argument();
 
         $checker->lexicalCheck($instructionLineArray[0]);
         $checker->syntaxCheck($instructionLineArray);
@@ -42,7 +41,9 @@ class Instruction {
 
         // Now we heave only arguments in $instructionLineArray
         foreach ($instructionLineArray as $argumentLine) {
+            $argument = new Argument();
             $argument->parseArgument($argumentLine);
+            echo $argumentLine . "\n";
             array_push($this->__arguments, $argument);
         }
     }
