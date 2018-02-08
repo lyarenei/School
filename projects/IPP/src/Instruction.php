@@ -60,7 +60,6 @@ class Instruction {
             $argument = $this->__parseArgument($argumentLine);
             array_push($this->__arguments, $argument);
         }
-        //$this->__arguments = $instructionLineArray;
     }
 
     public function getArguments() {
