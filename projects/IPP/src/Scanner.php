@@ -13,14 +13,6 @@ class Scanner {
         $this->__logger = new Logger();
     }
 
-    private function __parseLine($line) {
-        $trimmedLine = trim($line, " \t\n\r\0\x0B");
-        if (empty($trimmedLine)) {
-            return FALSE;
-        }
-        return $trimmedLine;
-    }
-
     public function openFile($fileName) {
         if (is_readable($fileName)) {
             $this->__sourceFile = fopen($fileName, "r");
@@ -30,19 +22,18 @@ class Scanner {
     }
 
     public function getLine() {
-        do {
-            $line = fgets($this->__sourceFile);
-            $lineT = preg_split('/#.*/i', $line);
-            if ($this->__parseLine($lineT[0]) == FALSE) {
-                if ($line == FALSE) {
-                    return;
-                } else {
-                    continue;
-                }
-            } else {
-                return $lineT[0];
-            }
-        } while ($line != FALSE);
+        $line = fgets($this->__sourceFile);
+        if ($line == FALSE) {
+            return;
+        }
+
+        $line = preg_replace('/#.*/', '', $line);
+        $line = trim($line, " \t\n\r\0\x0B");
+        if (empty($line)) {
+            return $this->getLine();
+        } else {
+            return $line;
+        }
     }
 }
 
