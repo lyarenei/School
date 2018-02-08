@@ -21,6 +21,10 @@ class Instruction {
         $this->__opcode = $opcode;
     }
 
+    public function getOpcode() {
+        return $this->__opcode;
+    }
+
     public function setInstructionArguments($instructionLineArray) {
         $checker = new Checker();
         $checker->lexicalCheck($instructionLineArray[0]);
