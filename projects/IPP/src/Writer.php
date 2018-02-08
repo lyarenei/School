@@ -13,7 +13,7 @@ class Writer {
 
     }
 
-    private function __WriteInstruction($parsedInstruction) {
+    private function __writeInstruction($parsedInstruction) {
         $this->__xmlWriter->startElement($parsedInstruction->getOpcode());
         $this->__xmlWriter->startElement($parsedInstruction->getOrder());
 
@@ -25,12 +25,12 @@ class Writer {
         $this->__xmlWriter->endElement();
     }
 
-    private function __WriteProgram($parsedProgram) {
+    private function __writeProgram($parsedProgram) {
         $this->__xmlWriter->startElement('IPPcode18');
         //TODO: fix parsing language, so I can use this
         //$this->__xmlWriter->startElement($parsedProgram->getLanguage());
         foreach ($parsedProgram->getInstructions() as $instruction) {
-            $this->__WriteInstruction($instruction);
+            $this->__writeInstruction($instruction);
         }
         $this->__xmlWriter->endElement();
     }
@@ -41,7 +41,7 @@ class Writer {
         $this->__xmlWriter->setIndentString(' ');
         $this->__xmlWriter->startDocument('1.0', 'UTF-8');
 
-        $this->__WriteProgram($parsedProgram);
+        $this->__writeProgram($parsedProgram);
 
         $this->__xmlWriter->endDocument();
         // TODO: refactor into method to write to any file
