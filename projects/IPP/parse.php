@@ -17,4 +17,7 @@ $fileName = 'test.txt';
 $fileAnalyzer = new FileAnalyzer();
 $analyzedProgram = $fileAnalyzer->analyzeFile($fileName);
 
+$writer = new Writer();
+$writer->write($analyzedProgram, STDOUT);
+
 ?>
