@@ -21,7 +21,7 @@ class Program {
         $instructionParams = preg_split('/\s+/', $instructionLine);
         $instruction->setOrder($counter);
         $instruction->setOpcode($instructionParams[0]);
-        $instruction->setInstructionArguments($instructionParams);
+        $instruction->setArguments($instructionParams);
         array_push($this->__instructions, $instruction);
         $counter++;
     }

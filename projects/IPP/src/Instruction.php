@@ -25,7 +25,7 @@ class Instruction {
         return $this->__opcode;
     }
 
-    public function setInstructionArguments($instructionLineArray) {
+    public function setArguments($instructionLineArray) {
         $checker = new Checker();
         $checker->lexicalCheck($instructionLineArray[0]);
         $checker->syntaxCheck($instructionLineArray);
