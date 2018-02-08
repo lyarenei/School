@@ -13,6 +13,10 @@ class Instruction {
         $this->__order = $order;
     }
 
+    public function getOrder() {
+        return $this->__order;
+    }
+
     public function setOpcode($opcode) {
         $this->__opcode = $opcode;
     }
