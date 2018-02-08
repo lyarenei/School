@@ -10,27 +10,31 @@ class Writer {
     }
 
     private function __writeArgument($argument) {
-        $this->__xmlWriter->startElement($argument->getType());
+        $this->__xmlWriter->startElement('argx');
+        $this->__xmlWriter->writeAttribute('type', $argument->getType());
+        $this->__xmlWriter->startElement('value');
         $this->__xmlWriter->text($argument->getValue());
         $this->__xmlWriter->endElement();
     }
 
     private function __writeInstruction($parsedInstruction) {
-        $this->__xmlWriter->startElement($parsedInstruction->getOpcode());
-        $this->__xmlWriter->startElement($parsedInstruction->getOrder());
+        $this->__xmlWriter->startElement('instruction');
+        $this->__xmlWriter->writeAttribute('order', $parsedInstruction->getOrder());
+        $this->__xmlWriter->writeAttribute('opcode', $parsedInstruction->getOpcode());
 
         foreach ($parsedInstruction->getArguments() as $argument) {
             $this->__writeArgument($argument);
         }
 
         $this->__xmlWriter->endElement();
-        $this->__xmlWriter->endElement();
     }
 
     private function __writeProgram($parsedProgram) {
-        $this->__xmlWriter->startElement('IPPcode18');
+        $this->__xmlWriter->startElement('program');
+        $this->__xmlWriter->writeAttribute('language', 'IPPcode18');
+
         //TODO: fix parsing language, so I can use this
-        //$this->__xmlWriter->startElement($parsedProgram->getLanguage());
+        //$this->__xmlWriter->writeAttribute('language', $parsedProgram->getLanguage());
         foreach ($parsedProgram->getInstructions() as $instruction) {
             $this->__writeInstruction($instruction);
         }
@@ -40,7 +44,7 @@ class Writer {
     public function Write($parsedProgram, $outputFile) {
         $this->__xmlWriter->openMemory();
         $this->__xmlWriter->setIndent(4);
-        $this->__xmlWriter->setIndentString(' ');
+        $this->__xmlWriter->setIndentString('  ');
         $this->__xmlWriter->startDocument('1.0', 'UTF-8');
 
         $this->__writeProgram($parsedProgram);
