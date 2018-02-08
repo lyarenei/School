@@ -15,11 +15,10 @@ class Scanner {
 
     private function __parseLine($line) {
         $trimmedLine = trim($line, " \t\n\r\0\x0B");
-        $opcode = explode('#', $trimmedLine);
-        if (empty($opcode[0])) {
+        if (empty($trimmedLine)) {
             return FALSE;
         }
-        return $opcode[0];
+        return $trimmedLine;
     }
 
     public function openFile($fileName) {
@@ -33,11 +32,15 @@ class Scanner {
     public function getLine() {
         do {
             $line = fgets($this->__sourceFile);
-            $opcode = $this->__parseLine($line);
-            if ($opcode == FALSE || empty($opcode)) {
-                continue;
+            $lineT = preg_split('/#.*/i', $line);
+            if ($this->__parseLine($lineT[0]) == FALSE) {
+                if ($line == FALSE) {
+                    return;
+                } else {
+                    continue;
+                }
             } else {
-                return $opcode;
+                return $lineT[0];
             }
         } while ($line != FALSE);
     }
