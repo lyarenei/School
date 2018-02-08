@@ -10,7 +10,9 @@ class Writer {
     }
 
     private function __writeArgument($argument) {
-
+        $this->__xmlWriter->startElement($argument->getType());
+        $this->__xmlWriter->text($argument->getValue());
+        $this->__xmlWriter->endElement();
     }
 
     private function __writeInstruction($parsedInstruction) {
